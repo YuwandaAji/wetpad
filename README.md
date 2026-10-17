@@ -1,6 +1,6 @@
-# Wattpad Profile & Stories Clone
+# Object Cloning: Wattpad  
 
-Aplikasi ini adalah purwarupa (prototype) antarmuka seluler berbasis Flutter yang mereplikasi fitur Profil Pengguna dan Manajemen Cerita dari aplikasi Wattpad. Proyek ini dirancang dengan struktur kode yang bersih dan siap diintegrasikan dengan *backend* berbasis RESTful API (seperti Laravel) dan sistem basis data.
+Wattpad adalah platform baca dan tulis cerita online yang sangat populer di dunia. Berdiri sejak Desember 2006, Wattpad menjadi tempat bagi jutaan pengguna untuk menulis dan membaca cerita dalam berbagai genre. Platform ini didirikan oleh Allen Lau dan Ivan Yuen dengan tujuan menciptakan komunitas yang menghubungkan penulis dan pembaca tanpa batas.
 
 ## Fitur Utama
 
