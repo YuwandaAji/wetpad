@@ -1,4 +1,4 @@
-# Object Cloning: Wattpad  
+# Object Cloning: Wetpad (Wattpad)
 
 Wattpad adalah platform baca dan tulis cerita online yang sangat populer di dunia. Berdiri sejak Desember 2006, Wattpad menjadi tempat bagi jutaan pengguna untuk menulis dan membaca cerita dalam berbagai genre. Platform ini didirikan oleh Allen Lau dan Ivan Yuen dengan tujuan menciptakan komunitas yang menghubungkan penulis dan pembaca tanpa batas.
 
