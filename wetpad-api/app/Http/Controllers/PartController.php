@@ -42,6 +42,9 @@ class PartController extends Controller
             'voted' => $user
                 ? DB::table('votes')->where(['user_id' => $user->id, 'part_id' => $p->id])->exists()
                 : false,
+            'in_library' => $user                                  
+                ? DB::table('library')->where(['user_id' => $user->id, 'story_id' => $p->story_id])->exists()
+                : false,
         ]);
     }
 
