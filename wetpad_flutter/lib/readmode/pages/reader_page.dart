@@ -105,6 +105,7 @@ class _ReaderPageState extends State<ReaderPage> {
         _part = p;
         _voted = p.voted;
         _votes = p.votes;
+        _inLibrary = p.inLibrary;
         _paraCounts = Map.of(p.paragraphComments);
       });
       _progress.value = 0;
@@ -285,6 +286,69 @@ class _ReaderPageState extends State<ReaderPage> {
     }
   }
 
+  Future<void> _onBack() async {
+    
+    if (_selPara != null) {
+      _clearSelection();
+      return;
+    }
+    if (_scaffoldKey.currentState?.isEndDrawerOpen ?? false) {
+      _scaffoldKey.currentState?.closeEndDrawer();
+      return;
+    }
+    if (_settings) {
+      setState(() => _settings = false);
+      return;
+    }
+
+    final p = _part;
+    if (p != null && !_inLibrary && Session.token != null) {
+      final add = await _askAddToLibrary(p);
+      if (add == null || !mounted) return; // ketuk di luar dialog = tetap membaca
+      if (add) {
+        try {
+          await ReadApi.addToLibrary(p.storyId);
+          if (mounted) _snack('Ditambahkan ke perpustakaan');
+        } catch (e) {
+          if (mounted) _snack('$e');
+        }
+      }
+    }
+    if (mounted) Navigator.pop(context);
+  }
+
+  Future<bool?> _askAddToLibrary(Part p) => showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: const Color(0xFF424242),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(4))),
+          title: Text(p.storyTitle,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600)),
+          content: const Text('Tambahkan ke Perpustakaan',
+              style: TextStyle(fontSize: 18)),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.orange,
+                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('TIDAK'),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.orange,
+                textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('YA'),
+            ),
+          ],
+        ),
+      );
+
   void _showActions() {
     showModalBottomSheet(
       context: context,
@@ -340,15 +404,21 @@ class _ReaderPageState extends State<ReaderPage> {
     final pal = _pal;
     final p = _part;
     final selecting = _selPara != null;
-    return Scaffold(
-      key: _scaffoldKey,
-      extendBody: true,
-      backgroundColor: pal.bg,
-      appBar: selecting ? _selectionBar(pal) : (_bars ? _appBar(p, pal) : null),
-      endDrawer: p == null ? null : _drawer(p),
-      body: _body(pal),
-      bottomNavigationBar:
-          (_bars && !selecting && p != null) ? _bottomBar(p, pal) : null,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _onBack();
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        extendBody: true,
+        backgroundColor: pal.bg,
+        appBar: selecting ? _selectionBar(pal) : (_bars ? _appBar(p, pal) : null),
+        endDrawer: p == null ? null : _drawer(p),
+        body: _body(pal),
+        bottomNavigationBar:
+            (_bars && !selecting && p != null) ? _bottomBar(p, pal) : null,
+      ),
     );
   }
 

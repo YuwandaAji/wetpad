@@ -4,7 +4,7 @@ class Part {
   final int? prevId, nextId;
   final String title, content, storyTitle, author;
   final String? coverUrl;
-  final bool voted;
+  final bool voted, inLibrary;
   final Map<int, int> paragraphComments; // indeks paragraf -> jumlah komentar
 
   Part.fromJson(Map<String, dynamic> j)
@@ -20,6 +20,7 @@ class Part {
         prevId = j['prev_id'],
         nextId = j['next_id'],
         votes = j['votes'] ?? 0,
+        inLibrary = j['in_library'] ?? false,
         commentsCount = j['comments_count'] ?? 0,
         voted = j['voted'] ?? false,
         paragraphComments = {
