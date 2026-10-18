@@ -1,4 +1,4 @@
-// lib/features/readmode/widgets/reaction_picker.dart
+
 import 'package:flutter/material.dart';
 
 const kStickers = [

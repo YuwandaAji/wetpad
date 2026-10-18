@@ -1,4 +1,4 @@
-// lib/core/format.dart
+
 const _bulan = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 
 String fmtDate(DateTime d) => '${_bulan[d.month - 1]} ${d.day}, ${d.year}'; // Jul 4, 2026
