@@ -1,4 +1,4 @@
-// lib/features/readmode/widgets/paragraph_header.dart
+
 import 'package:flutter/material.dart';
 import '../../../core/config_api.dart';
 import '../../../core/theme.dart';

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
+Route::get('/auth/check', [AuthController::class, 'check']);
 
 Route::get('/stories/{id}', [StoryController::class, 'show']);
 Route::get('/stories/{id}/parts', [StoryController::class, 'parts']);
@@ -14,6 +15,7 @@ Route::get('/comments/{id}/replies', [CommentController::class, 'replies']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
+    Route::put('/auth/genres', [AuthController::class, 'setGenres']);
     Route::post('/parts/{id}/vote', [PartController::class, 'vote']);
     Route::post('/stories/{id}/reports', [ReportController::class, 'store']);
     Route::post('/parts/{id}/comments', [CommentController::class, 'store']);

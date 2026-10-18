@@ -1,4 +1,4 @@
-// lib/features/readmode/models/story.dart
+
 class Story {
   final int id, partsCount, readsTotal, votesTotal;
   final String title, status;
