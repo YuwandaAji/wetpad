@@ -1,6 +1,11 @@
 
 import 'package:flutter/material.dart';
 
+const kBg = Color(0xFF121212);
+const kDivider = Color(0xFF2A2A2A);
+const kOrange = Color(0xFFFF6122);
+const kGreyField = Color(0xFF1E1E1E);
+
 class AppColors {
   static const bg = Color(0xFF121212);
   static const orange = Color(0xFFFF6122);
@@ -11,15 +16,17 @@ class AppColors {
 }
 
 ThemeData appTheme() => ThemeData(
-      brightness: Brightness.dark,
-      useMaterial3: true,
-      scaffoldBackgroundColor: AppColors.bg,
-      colorScheme: const ColorScheme.dark(
-          primary: AppColors.orange, surface: AppColors.bg),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.bg,
-        surfaceTintColor: Colors.transparent,
-        scrolledUnderElevation: 0,
-        elevation: 0,
-      ),
-    );
+  brightness: Brightness.dark,
+  useMaterial3: true,
+  scaffoldBackgroundColor: AppColors.bg,
+  colorScheme: const ColorScheme.dark(
+    primary: AppColors.orange,
+    surface: AppColors.bg,
+  ),
+  appBarTheme: const AppBarTheme(
+    backgroundColor: AppColors.bg,
+    surfaceTintColor: Colors.transparent,
+    scrolledUnderElevation: 0,
+    elevation: 0,
+  ),
+);
