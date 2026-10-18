@@ -1,4 +1,4 @@
-// lib/core/theme.dart
+
 import 'package:flutter/material.dart';
 
 const kBg = Color(0xFF121212);

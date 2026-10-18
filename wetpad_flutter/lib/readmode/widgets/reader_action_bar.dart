@@ -1,4 +1,4 @@
-// lib/features/readmode/widgets/reader_action_bar.dart
+
 import 'package:flutter/material.dart';
 import '../../../core/config_api.dart';
 import '../models/part.dart';

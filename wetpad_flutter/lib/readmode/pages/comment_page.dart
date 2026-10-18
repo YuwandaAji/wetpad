@@ -1,4 +1,4 @@
-// lib/features/readmode/pages/comments_page.dart
+
 import 'package:flutter/material.dart';
 import '../../../core/config_api.dart';
 import '../../../core/format.dart';
