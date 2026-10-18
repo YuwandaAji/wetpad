@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'core/config_api.dart';
 import 'core/theme.dart';
 import 'auth/pages/splash_page.dart';
+import 'home/screens/home_screen.dart';
 import 'library/screens/library_data.dart';
 import 'library/screens/library_screen.dart';
 import 'library/widgets/app_bottom_nav.dart';
@@ -22,7 +24,7 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Wetpad',
@@ -30,6 +32,7 @@ class MyApp extends StatelessWidget {
       theme: appTheme(),
       home: const SplashPage(),
       routes: {
+        '/home': (_) => const HomeScreen(),
         '/search': (_) => const _TabPage(index: 1),
         '/library': (_) => const _TabPage(index: 2),
       },
@@ -45,13 +48,16 @@ class _TabPage extends StatelessWidget {
   void _openStory(BuildContext context, SearchStory s) {
     final id = int.tryParse(s.id);
     if (id == null) return;
-    Navigator.of(context).push(MaterialPageRoute<void>(
-      builder: (_) => StoryPager(storyIds: [id], initialIndex: 0),
-    ));
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => StoryPager(storyIds: [id], initialIndex: 0),
+      ),
+    );
   }
 
   void _onTap(BuildContext context, int i) {
     if (i == index) return;
+    if (i == 0) Navigator.of(context).pushReplacementNamed('/home');
     if (i == 1) Navigator.of(context).pushReplacementNamed('/search');
     if (i == 2) Navigator.of(context).pushReplacementNamed('/library');
   }
