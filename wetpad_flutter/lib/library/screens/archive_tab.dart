@@ -6,8 +6,11 @@ import 'library_data.dart';
 
 // Tab "ARCHIVE"//
 class ArchiveTab extends StatelessWidget {
-  const ArchiveTab(
-      {super.key, required this.stories, required this.onStoryMenu});
+  const ArchiveTab({
+    super.key,
+    required this.stories,
+    required this.onStoryMenu,
+  });
   final List<LibraryStory> stories;
   final void Function(LibraryStory) onStoryMenu;
 
@@ -20,9 +23,10 @@ class ArchiveTab extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.only(top: 60),
             child: Center(
-              child: Text('No archived stories.',
-                  style:
-                      TextStyle(color: LibColors.textSecondary, fontSize: 16)),
+              child: Text(
+                'No archived stories.',
+                style: TextStyle(color: LibColors.textSecondary, fontSize: 16),
+              ),
             ),
           )
         else
