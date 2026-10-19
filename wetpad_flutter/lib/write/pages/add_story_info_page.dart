@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/theme.dart';
+import '../data/story_models.dart';
+import '../data/write_repository.dart';
 
 class AddStoryInfoPage extends StatefulWidget {
   const AddStoryInfoPage({super.key});
@@ -17,12 +19,17 @@ class _AddStoryInfoPageState extends State<AddStoryInfoPage> {
   final _descCtrl = TextEditingController();
   final _picker = ImagePicker();
   Uint8List? _coverBytes;
+  bool _saving = false;
 
   @override
   void dispose() {
     _titleCtrl.dispose();
     _descCtrl.dispose();
     super.dispose();
+  }
+
+  void _toast(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   Future<void> _pickCover() async {
@@ -37,18 +44,32 @@ class _AddStoryInfoPageState extends State<AddStoryInfoPage> {
     setState(() => _coverBytes = bytes);
   }
 
-  void _save() {
-    if (_titleCtrl.text.trim().isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Judul cerita wajib diisi')));
+  Future<void> _save() async {
+    final title = _titleCtrl.text.trim();
+    if (title.isEmpty) {
+      _toast('Judul cerita wajib diisi');
       return;
     }
-    // TODO: kirim judul, deskripsi, dan cover ke API
-    // (menunggu endpoint dari backend)
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Cerita tersimpan (sementara)')),
-    );
+    if (_saving) return;
+    setState(() => _saving = true);
+
+    try {
+      final story = await writeRepository.createStory(
+        StoryDraft(
+          title: title,
+          description: _descCtrl.text.trim(),
+          coverBytes: _coverBytes,
+        ),
+      );
+      if (!mounted) return;
+      Navigator.pop(context, story);
+    } on ApiException catch (e) {
+      if (mounted) _toast(e.message);
+    } catch (_) {
+      if (mounted) _toast('Gagal menyimpan. Cek koneksi internet.');
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -66,7 +87,7 @@ class _AddStoryInfoPageState extends State<AddStoryInfoPage> {
         titleSpacing: 0,
         actions: [
           TextButton(
-            onPressed: () {},
+            onPressed: () => Navigator.pop(context),
             child: const Text(
               'SKIP',
               style: TextStyle(
@@ -145,16 +166,28 @@ class _AddStoryInfoPageState extends State<AddStoryInfoPage> {
           child: SizedBox(
             height: 52,
             child: ElevatedButton(
-              onPressed: _save,
+              onPressed: _saving ? null : _save,
               style: ElevatedButton.styleFrom(
                 backgroundColor: kOrange,
                 foregroundColor: Colors.white,
                 shape: const StadiumBorder(),
               ),
-              child: const Text(
-                'Simpan cerita',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              child: _saving
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Text(
+                      'Simpan cerita',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
         ),
