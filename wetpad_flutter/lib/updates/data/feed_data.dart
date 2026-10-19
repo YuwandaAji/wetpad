@@ -1,0 +1,107 @@
+import '../models/feed_item.dart';
+import 'communities_data.dart';
+import 'stories_data.dart';
+
+class FeedData {
+  static const items = <FeedItem>[
+    FeedItem(
+      id: 'f1',
+      community: CommunitiesData.action,
+      type: FeedItemType.readingListAdded,
+      minutesAgo: 360,
+      storyCount: 10,
+      title: 'Action & Adventure Spotlight',
+      subtitle: '90 cerita • 229 suka',
+      stories: [StoriesData.raiseAssassin, StoriesData.virusWithin],
+    ),
+    FeedItem(
+      id: 'f2',
+      community: CommunitiesData.action,
+      type: FeedItemType.comment,
+      minutesAgo: 660,
+      targetName: 'Halloween Vault 2026',
+      title: 'Activity #2: Scavenger Hunt',
+      commentText:
+          "Hi, this activity is a challenge and it doesn't involve a story submission, just a hunt!",
+      stories: [StoriesData.halloween],
+    ),
+    FeedItem(
+      id: 'f3',
+      community: CommunitiesData.wattpad,
+      type: FeedItemType.newReadingList,
+      minutesAgo: 665,
+      title: 'Hidden Identities & Secret Plots',
+      subtitle: '24 cerita • 87 suka',
+      stories: [StoriesData.duplicity, StoriesData.fireKing],
+    ),
+    FeedItem(
+      id: 'f4',
+      community: CommunitiesData.romance,
+      type: FeedItemType.readingListAdded,
+      minutesAgo: 900,
+      storyCount: 6,
+      title: 'Slow Burn Favourites',
+      subtitle: '41 cerita • 512 suka',
+      stories: [StoriesData.midnightLetters, StoriesData.fireKing],
+    ),
+    FeedItem(
+      id: 'f5',
+      community: CommunitiesData.fantasy,
+      type: FeedItemType.newReadingList,
+      minutesAgo: 1500,
+      title: 'Magic Systems Worth Studying',
+      subtitle: '18 cerita • 140 suka',
+      stories: [StoriesData.hollowCrown, StoriesData.fireKing],
+    ),
+    FeedItem(
+      id: 'f6',
+      community: CommunitiesData.horror,
+      type: FeedItemType.comment,
+      minutesAgo: 2000,
+      targetName: 'Whisper House',
+      title: 'Chapter 12 discussion thread',
+      commentText:
+          'Spoilers ahead! Did anyone else catch the clue in the attic scene?',
+      stories: [StoriesData.whisperHouse],
+    ),
+    FeedItem(
+      id: 'f7',
+      community: CommunitiesData.scifi,
+      type: FeedItemType.readingListAdded,
+      minutesAgo: 240,
+      storyCount: 8,
+      title: 'Space Adventures',
+      subtitle: '32 cerita • 96 suka',
+      stories: [StoriesData.virusWithin, StoriesData.raiseAssassin],
+    ),
+    FeedItem(
+      id: 'f8',
+      community: CommunitiesData.fanfic,
+      type: FeedItemType.newReadingList,
+      minutesAgo: 120,
+      title: 'Best Fanfics This Month',
+      subtitle: '55 cerita • 301 suka',
+      stories: [StoriesData.midnightLetters, StoriesData.duplicity],
+    ),
+    FeedItem(
+      id: 'f9',
+      community: CommunitiesData.vampire,
+      type: FeedItemType.comment,
+      minutesAgo: 90,
+      targetName: 'Whisper House',
+      title: 'Vampire Week: share your picks',
+      commentText: 'Drop your favourite vampire story below and why you love it!',
+      stories: [StoriesData.whisperHouse],
+    ),
+    FeedItem(
+      id: 'f10',
+      community: CommunitiesData.fandoms,
+      type: FeedItemType.readingListAdded,
+      minutesAgo: 300,
+      storyCount: 5,
+      title: 'Fandom Crossovers',
+      subtitle: '27 cerita • 64 suka',
+      stories: [StoriesData.fireKing, StoriesData.hollowCrown],
+    ),
+  ];
+}
