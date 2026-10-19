@@ -1,11 +1,14 @@
 <?php
 
 use App\Http\Controllers\{AuthController, StoryController, PartController, ReportController, LibraryController, CommentController, ReactionController};
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/auth/check', [AuthController::class, 'check']);
+
+Route::get('/home', [HomeController::class, 'index']);
 
 Route::get('/stories/{id}', [StoryController::class, 'show']);
 Route::get('/stories/{id}/parts', [StoryController::class, 'parts']);
