@@ -6,11 +6,15 @@ import 'novel_cover_image.dart';
 class NovelListSection extends StatelessWidget {
   final List<Novel> novels;
   final ValueChanged<Novel> onNovelTap;
+  final String title;
+  final String subtitle;
 
   const NovelListSection({
     super.key,
     required this.novels,
     required this.onNovelTap,
+    this.title = "Daftar Novel Sains & Distopia",
+    this.subtitle = "Peringkat cerita paling diminati minggu ini",
   });
 
   @override
@@ -25,27 +29,29 @@ class NovelListSection extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Daftar Novel Sains & Distopia",
-                    style: TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF1C1C1C),
-                      letterSpacing: -0.3,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF1C1C1C),
+                        letterSpacing: -0.3,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 2),
-                  Text(
-                    "Peringkat cerita paling diminati minggu ini",
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Color(0xFF757575),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Color(0xFF757575),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               TextButton(
                 onPressed: () {},

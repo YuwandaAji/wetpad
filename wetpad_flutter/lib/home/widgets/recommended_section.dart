@@ -6,11 +6,16 @@ import 'novel_cover_image.dart';
 class RecommendedSection extends StatelessWidget {
   final List<Novel> novels;
   final ValueChanged<Novel> onNovelTap;
+  final String title;
+  final String subtitle;
 
   const RecommendedSection({
     super.key,
     required this.novels,
     required this.onNovelTap,
+    this.title = "Rekomendasi Cerita Sains & Distopia",
+    this.subtitle =
+        "Koleksi terpilih dunia fiksi ilmiah, kecerdasan buatan, dan masa depan kelam",
   });
 
   @override
@@ -26,7 +31,7 @@ class RecommendedSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Rekomendasi Cerita Sains & Distopia",
+                title,
                 style: const TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.w800,
@@ -36,7 +41,7 @@ class RecommendedSection extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                "Koleksi terpilih dunia fiksi ilmiah, kecerdasan buatan, dan masa depan kelam",
+                subtitle,
                 style: TextStyle(
                   fontSize: 13,
                   color: Colors.grey.shade600,
