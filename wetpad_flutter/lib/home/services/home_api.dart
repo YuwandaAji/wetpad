@@ -2,45 +2,48 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../core/config_api.dart';
+import '../models/novel.dart';
 
-class HomeStory {
-  final int id, partsCount, readsTotal, votesTotal;
-  final String title, status;
-  final String? coverUrl, description, genre, author;
-  final List<String> tags;
+String _count(int n) {
+  String f(double v, String unit) {
+    final s = v
+        .toStringAsFixed(2)
+        .replaceFirst(RegExp(r'\.?0+$'), '')
+        .replaceAll('.', ',');
+    return '$s $unit';
+  }
 
-  HomeStory.fromJson(Map<String, dynamic> j)
-      : id = j['id'],
-        title = j['title'],
-        coverUrl = j['cover_url'],
-        description = j['description'],
-        genre = j['genre'],
-        status = j['status'] ?? 'ongoing',
-        author = j['author'],
-        tags = List<String>.from(j['tags'] ?? []),
-        partsCount = j['parts_count'] ?? 0,
-        readsTotal = j['reads_total'] ?? 0,
-        votesTotal = j['votes_total'] ?? 0;
+  if (n >= 1000000) return f(n / 1000000, 'Jt');
+  if (n >= 1000) return f(n / 1000, 'Rb');
+  return '$n';
 }
+
+Novel _novel(Map<String, dynamic> j) => Novel(
+      id: j['id'],
+      title: j['title'],
+      author: j['author'] ?? '-',
+      synopsis: j['description'] ?? '',
+      coverUrl: j['cover_url'] ?? '',
+      tags: List<String>.from(j['tags'] ?? []),
+      reads: _count(j['reads_total'] ?? 0),
+      votes: _count(j['votes_total'] ?? 0),
+      parts: j['parts_count'] ?? 0,
+      isCompleted: j['status'] == 'completed',
+    );
+
+List<Novel> _novels(dynamic list) =>
+    (list as List).map((e) => _novel(Map<String, dynamic>.from(e))).toList();
 
 class HomeSection {
   final String key, title;
-  final List<HomeStory> stories;
-
-  HomeSection.fromJson(Map<String, dynamic> j)
-      : key = j['key'],
-        title = j['title'],
-        stories = (j['stories'] as List).map((e) => HomeStory.fromJson(e)).toList();
+  final List<Novel> stories;
+  HomeSection(this.key, this.title, this.stories);
 }
 
 class HomeData {
-  final List<HomeStory> topPicks, recommended;
+  final List<Novel> topPicks, recommended;
   final List<HomeSection> sections;
-
-  HomeData.fromJson(Map<String, dynamic> j)
-      : topPicks = (j['top_picks'] as List).map((e) => HomeStory.fromJson(e)).toList(),
-        recommended = (j['recommended'] as List).map((e) => HomeStory.fromJson(e)).toList(),
-        sections = (j['sections'] as List).map((e) => HomeSection.fromJson(e)).toList();
+  HomeData(this.topPicks, this.recommended, this.sections);
 }
 
 class HomeApi {
@@ -56,6 +59,14 @@ class HomeApi {
     if (r.statusCode >= 400 || body['success'] != true) {
       throw Exception(body['message'] ?? 'HTTP ${r.statusCode}');
     }
-    return HomeData.fromJson(body['data']);
+    final d = body['data'];
+    return HomeData(
+      _novels(d['top_picks']),
+      _novels(d['recommended']),
+      [
+        for (final s in (d['sections'] as List))
+          HomeSection(s['key'], s['title'], _novels(s['stories'])),
+      ],
+    );
   }
 }
