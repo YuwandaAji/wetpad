@@ -7,10 +7,10 @@ import 'home/screens/home_screen.dart';
 import 'library/screens/library_data.dart';
 import 'library/screens/library_screen.dart';
 import 'library/widgets/app_bottom_nav.dart';
-import 'readmode/pages/story_pager.dart';
 import 'search/data/mock_search_repository.dart';
 import 'search/data/search_models.dart';
 import 'search/screens/search_screen.dart';
+import 'readmode/open_story.dart';
 
 final _searchRepo = MockSearchRepository();
 final _libraryRepo = MockLibraryRepository();
@@ -48,11 +48,7 @@ class _TabPage extends StatelessWidget {
   void _openStory(BuildContext context, SearchStory s) {
     final id = int.tryParse(s.id);
     if (id == null) return;
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (_) => StoryPager(storyIds: [id], initialIndex: 0),
-      ),
-    );
+    openStoryFromSearch(context, id);
   }
 
   void _onTap(BuildContext context, int i) {
