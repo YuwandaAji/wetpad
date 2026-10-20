@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme.dart'; // sesuaikan kalau path temanya beda
+
 class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onPremiumTap;
   final VoidCallback? onGiftTap;
@@ -18,7 +20,7 @@ class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: AppColors.bg,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: SafeArea(
         bottom: false,
@@ -31,20 +33,26 @@ class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
 
             // Tombol "Coba Premium"
             InkWell(
-              onTap: onPremiumTap ??
+              onTap:
+                  onPremiumTap ??
                   () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("Fitur Wetpad Premium - Akses Tanpa Batas"),
+                        content: Text(
+                          "Fitur Wetpad Premium - Akses Tanpa Batas",
+                        ),
                         duration: Duration(seconds: 2),
                       ),
                     );
                   },
               borderRadius: BorderRadius.circular(20),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF1EBFC),
+                  color: AppColors.premiumBg,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Row(
@@ -53,13 +61,13 @@ class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
                     Icon(
                       Icons.bolt_rounded,
                       size: 18,
-                      color: Color(0xFF5B34B2),
+                      color: AppColors.lavender,
                     ),
                     SizedBox(width: 4),
                     Text(
                       "Coba Premium",
                       style: TextStyle(
-                        color: Color(0xFF5B34B2),
+                        color: AppColors.lavender,
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
                         letterSpacing: -0.2,
@@ -74,7 +82,8 @@ class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
 
             // Tombol Gift Box (Kado Hadiah Koin / Hadiah Harian)
             InkWell(
-              onTap: onGiftTap ??
+              onTap:
+                  onGiftTap ??
                   () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -109,7 +118,7 @@ class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
                 width: 34,
                 height: 34,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF38434D),
+                  color: Color(0xFF38A3C8),
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
@@ -134,10 +143,7 @@ class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        CustomPaint(
-          size: const Size(36, 36),
-          painter: _WattpadLogoPainter(),
-        ),
+        CustomPaint(size: const Size(36, 36), painter: _WattpadLogoPainter()),
       ],
     );
   }
@@ -148,11 +154,10 @@ class _WattpadLogoPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0xFFFF5B00)
+      ..color = AppColors.orange
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
-    // Gambar W khas wattpad dengan 3 lekukan organik tebal
     final path = Path();
     final w = size.width;
     final h = size.height;

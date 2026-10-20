@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme.dart';
-import 'add_story_info_page.dart';
 
 const _writingResourcesUrl = 'https://creators.wattpad.com/writing-resources/';
 
@@ -23,57 +22,55 @@ class WritePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-          child: Row(
-            children: [
-              const Text(
-                'Write',
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-              ),
-              const Spacer(),
-              const Text(
-                '@rozakl',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 12),
-              const CircleAvatar(
-                radius: 22,
-                backgroundColor: Colors.grey,
-                child: Icon(Icons.person, color: Colors.white),
-              ),
-            ],
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+            child: Row(
+              children: [
+                const Text(
+                  'Write',
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                const Text(
+                  '@rozakl', // TODO: ambil dari Session
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 12),
+                const CircleAvatar(
+                  radius: 22,
+                  backgroundColor: Colors.grey,
+                  child: Icon(Icons.person, color: Colors.white),
+                ),
+              ],
+            ),
           ),
-        ),
-        const Divider(height: 1, color: kDivider),
-        _menuItem(
-          icon: const Icon(Icons.view_week_outlined, size: 28),
-          label: 'Series',
-          onTap: () {},
-        ),
-        _menuItem(
-          icon: const Icon(Icons.note_add_outlined, size: 28),
-          label: 'Create new story',
-          onTap: () {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const AddStoryInfoPage()));
-          },
-        ),
-        _menuItem(
-          icon: _circleIcon(Icons.menu_book),
-          label: 'Writing resources',
-          onTap: () => _openLink(context, _writingResourcesUrl),
-        ),
-        _menuItem(
-          icon: _circleIcon(Icons.star),
-          label: 'Programs & opportunities',
-          onTap: () => _openLink(context, _writingResourcesUrl),
-        ),
-      ],
+          const Divider(height: 1, color: kDivider),
+          _menuItem(
+            icon: const Icon(Icons.view_week_outlined, size: 28),
+            label: 'Series',
+            onTap: () {},
+          ),
+          _menuItem(
+            icon: const Icon(Icons.note_add_outlined, size: 28),
+            label: 'Create new story',
+            onTap: () => Navigator.of(context).pushNamed('/add-story'),
+          ),
+          _menuItem(
+            icon: _circleIcon(Icons.menu_book),
+            label: 'Writing resources',
+            onTap: () => _openLink(context, _writingResourcesUrl),
+          ),
+          _menuItem(
+            icon: _circleIcon(Icons.star),
+            label: 'Programs & opportunities',
+            onTap: () => _openLink(context, _writingResourcesUrl),
+          ),
+        ],
+      ),
     );
   }
 
