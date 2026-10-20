@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme.dart';
+import '../widgets/continue_writing_card.dart';
 import 'add_story_info_page.dart';
+import 'edit_story_page.dart';
 
 class StoriesPage extends StatelessWidget {
   const StoriesPage({super.key});
@@ -9,6 +11,11 @@ class StoriesPage extends StatelessWidget {
   void _newStory(BuildContext context) {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (_) => const AddStoryInfoPage()));
+  }
+
+  void _openStory(BuildContext context, WriteSummary story) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => EditStoryPage(initial: story)));
   }
 
   @override
@@ -59,21 +66,136 @@ class StoriesPage extends StatelessWidget {
             ),
           ),
         ),
-        body: TabBarView(
-          children: [
-            // TODO: ganti dengan daftar cerita dari API kalau datanya ada
-            _EmptyState(
-              message: "You haven't published any stories yet",
-              buttonLabel: 'Publish a Story',
-              onPressed: () => _newStory(context),
-            ),
-            _EmptyState(
-              message: "You don't have any drafts yet",
-              buttonLabel: 'Start Writing',
-              onPressed: () => _newStory(context),
-            ),
-          ],
+        body: ValueListenableBuilder<WriteSummary?>(
+          valueListenable: writeSummary,
+          builder: (context, story, _) {
+            // TODO: ganti dengan daftar cerita dari API (write_repository)
+            final published = <WriteSummary>[
+              if (story != null && story.publishedParts > 0) story,
+            ];
+            final drafts = <WriteSummary>[
+              if (story != null && story.publishedParts == 0) story,
+            ];
+
+            return TabBarView(
+              children: [
+                _StoryList(
+                  stories: published,
+                  emptyMessage: "You haven't published any stories yet",
+                  buttonLabel: 'Publish a Story',
+                  onNew: () => _newStory(context),
+                  onOpen: (s) => _openStory(context, s),
+                ),
+                _StoryList(
+                  stories: drafts,
+                  emptyMessage: "You don't have any drafts yet",
+                  buttonLabel: 'Start Writing',
+                  onNew: () => _newStory(context),
+                  onOpen: (s) => _openStory(context, s),
+                ),
+              ],
+            );
+          },
         ),
+      ),
+    );
+  }
+}
+
+class _StoryList extends StatelessWidget {
+  const _StoryList({
+    required this.stories,
+    required this.emptyMessage,
+    required this.buttonLabel,
+    required this.onNew,
+    required this.onOpen,
+  });
+
+  final List<WriteSummary> stories;
+  final String emptyMessage;
+  final String buttonLabel;
+  final VoidCallback onNew;
+  final ValueChanged<WriteSummary> onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    if (stories.isEmpty) {
+      return _EmptyState(
+        message: emptyMessage,
+        buttonLabel: buttonLabel,
+        onPressed: onNew,
+      );
+    }
+    return ListView.separated(
+      padding: const EdgeInsets.all(24),
+      itemCount: stories.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 16),
+      itemBuilder: (_, i) =>
+          _StoryTile(story: stories[i], onTap: () => onOpen(stories[i])),
+    );
+  }
+}
+
+class _StoryTile extends StatelessWidget {
+  const _StoryTile({required this.story, required this.onTap});
+
+  final WriteSummary story;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final parts = story.publishedParts;
+    final title = story.title.trim().isEmpty ? 'Untitled' : story.title;
+
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 82,
+            height: 126,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color: kGreyField,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: story.coverBytes == null
+                ? const Icon(Icons.image_outlined, color: Colors.grey)
+                : Image.memory(story.coverBytes!, fit: BoxFit.cover),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '$parts published part${parts == 1 ? '' : 's'}',
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+                ),
+                if (story.description.trim().isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    story.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 15, color: Colors.grey),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

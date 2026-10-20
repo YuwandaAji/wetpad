@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme.dart';
+import '../widgets/continue_writing_card.dart';
 import 'add_story_info_page.dart';
+import 'edit_story_page.dart';
 import 'series_page.dart';
 import 'stories_page.dart';
 
@@ -21,6 +23,10 @@ class WritePage extends StatelessWidget {
         context,
       ).showSnackBar(const SnackBar(content: Text('Tidak bisa membuka link')));
     }
+  }
+
+  void _push(BuildContext context, Widget page) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
   }
 
   @override
@@ -51,32 +57,35 @@ class WritePage extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1, color: kDivider),
+          ValueListenableBuilder<WriteSummary?>(
+            valueListenable: writeSummary,
+            builder: (context, summary, _) {
+              if (summary == null) {
+                return const Divider(height: 1, color: kDivider);
+              }
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+                child: ContinueWritingCard(
+                  summary: summary,
+                  onTap: () => _push(context, EditStoryPage(initial: summary)),
+                ),
+              );
+            },
+          ),
           _menuItem(
             icon: const Icon(Icons.menu_book_outlined, size: 28),
             label: 'Stories',
-            onTap: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => const StoriesPage()));
-              // TODO: buka halaman daftar cerita milik penulis
-            },
+            onTap: () => _push(context, const StoriesPage()),
           ),
           _menuItem(
             icon: const Icon(Icons.view_week_outlined, size: 28),
             label: 'Series',
-            onTap: () {
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => const SeriesPage()));
-            },
+            onTap: () => _push(context, const SeriesPage()),
           ),
           _menuItem(
             icon: const Icon(Icons.note_add_outlined, size: 28),
             label: 'Create new story',
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const AddStoryInfoPage()),
-              );
-            },
+            onTap: () => _push(context, const AddStoryInfoPage()),
           ),
           _menuItem(
             icon: _circleIcon(Icons.menu_book),
@@ -125,7 +134,7 @@ class WritePage extends StatelessWidget {
             ),
           ),
         ),
-        const Divider(height: 1, color: kDivider),
+        const Divider(height: 1, color: Color.fromARGB(255, 27, 26, 26)),
       ],
     );
   }
