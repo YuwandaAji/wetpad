@@ -30,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/parts/{id}/paragraphs/{idx}/reactions', [ReactionController::class, 'store']);
     Route::get('/library', [LibraryController::class, 'index']);
     Route::put('/library/{storyId}', [LibraryController::class, 'upsert']);
+    Route::post('/library', [LibraryController::class, 'store']);
+    Route::put('/library/{storyId}/progress', [LibraryController::class, 'progress']);  
     Route::delete('/library/{storyId}', [LibraryController::class, 'destroy']);
     Route::get('/reading-lists', [ReadingListController::class, 'index']);
     Route::put('/reading-lists/{key}', [ReadingListController::class, 'upsert']);
@@ -44,8 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/stories/{id}/recommendations', [StoryController::class, 'recommendations']);
 
-Route::post('/library', [LibraryController::class, 'store']);
-Route::put('/library/{storyId}/progress', [LibraryController::class, 'progress']);
+
 
 Route::get('/parts/{id}/paragraphs/{idx}/reactions', [ReactionController::class, 'index']);
 
