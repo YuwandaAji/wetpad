@@ -175,6 +175,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+
+    // Tidak lagi membungkus dengan Theme(data: appTheme()).
+    // Tema (terang/gelap) sekarang diambil dari MaterialApp di atasnya,
+    // jadi pastikan theme, darkTheme, dan themeMode sudah di-set di main.dart.
     return Scaffold(
       // backgroundColor otomatis mengikuti scaffoldBackgroundColor tema aktif
       appBar: const HomeHeader(),
@@ -186,11 +191,16 @@ class _HomeScreenState extends State<HomeScreen> {
           physics: const AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
           ),
-          child: _loading
-              ? _centered(
-                  const CircularProgressIndicator(color: AppColors.orange),
-                )
-              : (_data == null ? _errorView() : _content(_data!)),
+          // Teks yang tidak menentukan warna sendiri memakai onSurface
+          // (putih di mode gelap, gelap di mode terang).
+          child: DefaultTextStyle.merge(
+            style: TextStyle(color: onSurface),
+            child: _loading
+                ? _centered(
+                    const CircularProgressIndicator(color: AppColors.orange),
+                  )
+                : (_data == null ? _errorView() : _content(_data!)),
+          ),
         ),
       ),
     );
