@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme.dart';
 import '../models/novel.dart';
 import 'novel_cover_image.dart';
 
@@ -21,9 +22,6 @@ class NovelListSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (novels.isEmpty) return const SizedBox.shrink();
 
-    // Warna teks ikut tema aktif (terang/gelap)
-    final cs = Theme.of(context).colorScheme;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -41,7 +39,7 @@ class NovelListSection extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.w800,
-                        color: cs.onSurface,
+                        color: Colors.white,
                         letterSpacing: -0.3,
                       ),
                     ),
@@ -50,7 +48,7 @@ class NovelListSection extends StatelessWidget {
                       subtitle,
                       style: TextStyle(
                         fontSize: 13,
-                        color: cs.onSurfaceVariant,
+                        color: AppColors.muted,
                       ),
                     ),
                   ],
@@ -89,7 +87,7 @@ class NovelListSection extends StatelessWidget {
           separatorBuilder: (context, index) => const Divider(
             height: 24,
             thickness: 0.8,
-            color: Color(0xFFEEEEEE),
+            color: kDivider,
           ),
           itemBuilder: (context, index) {
             final novel = novels[index];
@@ -101,8 +99,6 @@ class NovelListSection extends StatelessWidget {
   }
 
   Widget _buildNovelListItem(BuildContext context, Novel novel, int rank) {
-    final cs = Theme.of(context).colorScheme;
-
     return InkWell(
       onTap: () => onNovelTap(novel),
       borderRadius: BorderRadius.circular(8),
@@ -149,7 +145,7 @@ class NovelListSection extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14.5,
                       fontWeight: FontWeight.w800,
-                      color: cs.onSurface,
+                      color: Colors.white,
                       height: 1.2,
                     ),
                   ),
@@ -161,7 +157,7 @@ class NovelListSection extends StatelessWidget {
                     "Oleh ${novel.author}",
                     style: TextStyle(
                       fontSize: 12,
-                      color: cs.onSurfaceVariant,
+                      color: AppColors.muted,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -175,7 +171,7 @@ class NovelListSection extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 12,
-                      color: cs.onSurfaceVariant,
+                      color: AppColors.muted,
                       height: 1.3,
                     ),
                   ),
@@ -195,7 +191,7 @@ class NovelListSection extends StatelessWidget {
                         novel.reads,
                         style: TextStyle(
                           fontSize: 11,
-                          color: cs.onSurfaceVariant,
+                          color: AppColors.muted,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -210,7 +206,7 @@ class NovelListSection extends StatelessWidget {
                         novel.votes,
                         style: TextStyle(
                           fontSize: 11,
-                          color: cs.onSurfaceVariant,
+                          color: AppColors.muted,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -219,7 +215,7 @@ class NovelListSection extends StatelessWidget {
                         "${novel.parts} Bagian",
                         style: TextStyle(
                           fontSize: 11,
-                          color: cs.onSurfaceVariant,
+                          color: AppColors.muted,
                         ),
                       ),
                       const Spacer(),
