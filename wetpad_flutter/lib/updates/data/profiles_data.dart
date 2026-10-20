@@ -13,9 +13,12 @@ class ProfilesData {
       .where((s) => s.author.toLowerCase() == name.toLowerCase())
       .toList();
 
-  /// Profil akun kita sendiri.
-    /// Profil akun kita sendiri, selalu diambil dari ProfileStore.
+  static Profile? _meOverride;
+  static set me(Profile p) => _meOverride = p;
+
+  /// Profil akun kita sendiri, diambil dari ProfileStore.
   static Profile get me {
+    if (_meOverride != null) return _meOverride!;
     final s = ProfileStore.instance;
     return Profile(
       id: 'me',

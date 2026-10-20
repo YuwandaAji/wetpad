@@ -10,17 +10,9 @@ import '../search/data/api_search_repository.dart';
 import '../search/data/search_models.dart';
 import '../search/screens/search_screen.dart';
 import '../write/pages/write_page.dart';
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
 import '../updates/pages/updates_page.dart';
 import '../updates/theme/app_theme.dart';
 import '../updates/services/profile_api.dart';
->>>>>>> Stashed changes
-=======
-import '../updates/pages/updates_page.dart';
-import '../updates/theme/app_theme.dart';
->>>>>>> main
 
 final _searchRepo = ApiSearchRepository();
 final _libraryRepo = ApiLibraryRepository();

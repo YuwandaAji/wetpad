@@ -17,14 +17,12 @@ class NotificationDemoSeeder extends Seeder
             $this->command->warn('Butuh user "aji" dan minimal 1 cerita. Jalankan WetpadSeeder dulu.');
             return;
         }
-<<<<<<< HEAD
         
         if (UserNotification::where('user_id', $me->id)->exists()) {
             $this->command->info('User "aji" sudah punya notifikasi, dilewati.');
             return;
-=======
->>>>>>> main
-
+        }
+        
         $rows = [
             ['story_update', $story->title, 'penulis1 memperbarui cerita dengan Bab 6.', $story->id, 25, false],
             ['follow', 'penulis1 mulai mengikuti kamu', 'Lihat profilnya dan ikuti balik.', null, 140, false],
@@ -45,9 +43,5 @@ class NotificationDemoSeeder extends Seeder
                 'updated_at' => now()->subMinutes($minutesAgo),
             ]);
         }
-<<<<<<< HEAD
-        }
-=======
->>>>>>> main
     }
 }
