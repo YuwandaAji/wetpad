@@ -27,7 +27,7 @@ class NotificationTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: item.isRead ? null : const Color(0xFFFFF4EE),
+        color: item.isRead ? null : const Color(0xFF33231D),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,21 +42,33 @@ class NotificationTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.title,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight:
-                              item.isRead ? FontWeight.w500 : FontWeight.w800)),
+                  Text(
+                    item.title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: item.isRead
+                          ? FontWeight.w500
+                          : FontWeight.w800,
+                    ),
+                  ),
                   const SizedBox(height: 3),
-                  Text(item.body,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontSize: 14, color: AppColors.textSecondary)),
+                  Text(
+                    item.body,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(item.timeAgo,
-                      style: const TextStyle(
-                          fontSize: 12, color: AppColors.textSecondary)),
+                  Text(
+                    item.timeAgo,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -66,7 +78,9 @@ class NotificationTile extends StatelessWidget {
                 width: 10,
                 height: 10,
                 decoration: const BoxDecoration(
-                    color: AppColors.orange, shape: BoxShape.circle),
+                  color: AppColors.orange,
+                  shape: BoxShape.circle,
+                ),
               ),
           ],
         ),

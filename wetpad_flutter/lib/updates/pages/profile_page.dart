@@ -206,7 +206,7 @@ class ProfilePage extends StatelessWidget {
                       final top = MediaQuery.of(context).padding.top;
                       final minH = _toolbar + top;
                       final maxH = _expanded + top;
-                      // t = 1 saat header terbuka penuh, 0 saat menciut jadi AppBar putih
+                      // t = 1 saat header terbuka penuh, 0 saat menciut jadi AppBar gelap
                       final t = ((c.maxHeight - minH) / (maxH - minH)).clamp(
                         0.0,
                         1.0,
@@ -221,7 +221,7 @@ class ProfilePage extends StatelessWidget {
                           Positioned.fill(
                             child: ColoredBox(
                               color: Color.lerp(
-                                Colors.white,
+                                AppColors.background,
                                 profile.bannerColor,
                                 t,
                               )!,
@@ -295,13 +295,13 @@ class ProfilePage extends StatelessWidget {
                                         return [
                                           if (isMuted)
                                             const PopupMenuItem(
-                                                value: 'unmute',
-                                                child: Text('Batalkan senyap'),
+                                              value: 'unmute',
+                                              child: Text('Batalkan senyap'),
                                             ),
                                           if (isBlocked)
                                             const PopupMenuItem(
-                                                value: 'unblock',
-                                                child: Text('Batal blokir'),
+                                              value: 'unblock',
+                                              child: Text('Batal blokir'),
                                             ),
                                         ];
                                       }

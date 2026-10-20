@@ -104,7 +104,7 @@ class _PostTileState extends State<PostTile> {
       decoration: BoxDecoration(
         color: AppColors.tabBackground,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,14 +175,14 @@ class _PostTileState extends State<PostTile> {
           ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
-            child: Divider(height: 1, color: Color(0xFFDADADA)),
+            child: Divider(height: 1, color: AppColors.border),
           ),
           Text(
             post.text,
             style: const TextStyle(
               fontSize: 16,
               height: 1.4,
-              color: Color(0xFF555555),
+              color: AppColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -203,7 +203,7 @@ class _PostTileState extends State<PostTile> {
               child: PostComposer(
                 hint: 'Balas ${post.authorName}…',
                 buttonLabel: 'Balas',
-                fillColor: Colors.white,
+                fillColor: AppColors.background,
                 autofocus: true,
                 onSubmit: (text) {
                   widget.onReply(text);

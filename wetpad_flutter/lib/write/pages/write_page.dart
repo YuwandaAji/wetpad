@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/theme.dart';
 import 'add_story_info_page.dart';
 import 'series_page.dart';
-import 'editor_page.dart';
+import 'stories_page.dart';
 
 const _writingResourcesUrl = 'https://creators.wattpad.com/writing-resources/';
 
@@ -51,36 +51,45 @@ class WritePage extends StatelessWidget {
               ],
             ),
           ),
-        ),
-        const Divider(height: 1, color: kDivider),
-        _menuItem(
-          icon: const Icon(Icons.view_week_outlined, size: 28),
-          label: 'Series',
-          onTap: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => const SeriesPage()));
-          },
-        ),
-        _menuItem(
-          icon: const Icon(Icons.note_add_outlined, size: 28),
-          label: 'Create new story',
-          onTap: () {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (_) => const AddStoryInfoPage()));
-          },
-        ),
-        _menuItem(
-          icon: _circleIcon(Icons.menu_book),
-          label: 'Writing resources',
-          onTap: () => _openLink(context, _writingResourcesUrl),
-        ),
-        _menuItem(
-          icon: _circleIcon(Icons.star),
-          label: 'Programs & opportunities',
-          onTap: () => _openLink(context, _writingResourcesUrl),
-        ),
-      ],
+          const Divider(height: 1, color: kDivider),
+          _menuItem(
+            icon: const Icon(Icons.menu_book_outlined, size: 28),
+            label: 'Stories',
+            onTap: () {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => const StoriesPage()));
+              // TODO: buka halaman daftar cerita milik penulis
+            },
+          ),
+          _menuItem(
+            icon: const Icon(Icons.view_week_outlined, size: 28),
+            label: 'Series',
+            onTap: () {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => const SeriesPage()));
+            },
+          ),
+          _menuItem(
+            icon: const Icon(Icons.note_add_outlined, size: 28),
+            label: 'Create new story',
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const AddStoryInfoPage()),
+              );
+            },
+          ),
+          _menuItem(
+            icon: _circleIcon(Icons.menu_book),
+            label: 'Writing resources',
+            onTap: () => _openLink(context, _writingResourcesUrl),
+          ),
+          _menuItem(
+            icon: _circleIcon(Icons.star),
+            label: 'Programs & opportunities',
+            onTap: () => _openLink(context, _writingResourcesUrl),
+          ),
+        ],
+      ),
     );
   }
 

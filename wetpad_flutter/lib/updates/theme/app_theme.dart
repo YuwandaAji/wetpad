@@ -1,27 +1,20 @@
 import 'package:flutter/material.dart';
 
+import '../../library/widgets/library_style.dart' as library_theme;
+
 class AppColors {
-  static const orange = Color(0xFFFF5A12);
-  static const tabBackground = Color(0xFFF5F5F5);
-  static const textPrimary = Color(0xFF222222);
-  static const textSecondary = Color(0xFF8A8A8A);
-  static const chip = Color(0xFFF0F0F0);
-  static const sectionGap = Color(0xFFF3F3F3);
-  static const border = Color(0xFFE3E3E3);
-  static const followButton = Color(0xFFF2F2F2);
+  static const background = library_theme.LibColors.background;
+  static const orange = library_theme.LibColors.orange;
+  static const tabBackground = library_theme.LibColors.tabBar;
+  static const textPrimary = Colors.white;
+  static const textSecondary = library_theme.LibColors.textSecondary;
+  static const chip = library_theme.LibColors.chip;
+  static const sectionGap = library_theme.LibColors.background;
+  static const border = library_theme.LibColors.border;
+  static const followButton = library_theme.LibColors.sortPill;
   static const link = Color(0xFF1E7B6E);
 }
 
 class AppTheme {
-  static ThemeData get light => ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.orange),
-        scaffoldBackgroundColor: Colors.white,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-          foregroundColor: AppColors.textPrimary,
-        ),
-      );
+  static ThemeData get dark => library_theme.libraryTheme();
 }

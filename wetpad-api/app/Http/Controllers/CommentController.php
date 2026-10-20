@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Comment, Part};
+use App\Models\{Comment, Part, UserNotification};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CommentController extends Controller
 {
@@ -37,7 +38,7 @@ class CommentController extends Controller
     // komentar tingkat atas, terbaru dulu
     public function index(Request $r, $partId)
     {
-        $part = Part::with('story:id,author_id')->findOrFail($partId);
+        $part = Part::with('story:id,author_id, title')->findOrFail($partId);
         $q = $this->query(auth('sanctum')->id())
             ->where('part_id', $partId)->whereNull('parent_id');
 
@@ -83,6 +84,28 @@ class CommentController extends Controller
             'paragraph_index' => $paragraph,
             'body' => $v['body'],
         ]);
+        $me = $r->user();
+        if (!empty($v['parent_id'])) {
+            UserNotification::notifyUser(
+                Comment::find($v['parent_id'])->user_id,
+                $me->id,
+                'comment',
+                "{$me->username} membalas komentarmu",
+                Str::limit($v['body'], 100),
+                $part->story_id,
+                (int) $partId
+            );
+        } else {
+            UserNotification::notifyUser(
+                $part->story->author_id,
+                $me->id,
+                'comment',
+                "{$me->username} mengomentari {$part->story->title}",
+                Str::limit($v['body'], 100),
+                $part->story_id,
+                (int) $partId
+            );
+        }
         $c = $this->query($r->user()->id)->find($c->id);
 
         return $this->ok($this->shape($c, $part->story->author_id), null, 201);
@@ -90,12 +113,23 @@ class CommentController extends Controller
 
     public function like(Request $r, $id)
     {
-        Comment::findOrFail($id);
+        $c = Comment::with('part:id,story_id')->findOrFail($id);
         $key = ['user_id' => $r->user()->id, 'comment_id' => $id];
         $q = DB::table('comment_likes')->where($key);
         if ($q->exists()) { $q->delete(); $liked = false; }
         else { DB::table('comment_likes')->insert($key); $liked = true; }
 
+                if ($liked) {
+            UserNotification::notifyUser(
+                $c->user_id,
+                $r->user()->id,
+                'like',
+                "{$r->user()->username} menyukai komentarmu",
+                Str::limit($c->body, 100),
+                $c->part->story_id,
+                $c->part_id
+            );
+        }
         return $this->ok([
             'liked' => $liked,
             'likes_count' => DB::table('comment_likes')->where('comment_id', $id)->count(),

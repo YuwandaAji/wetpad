@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme.dart';
 import '../models/novel.dart';
 import 'novel_cover_image.dart';
 
@@ -33,8 +34,7 @@ class TopPicksCollage extends StatelessWidget {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              // Warna teks ikut tema aktif (terang/gelap)
-              color: Theme.of(context).colorScheme.onSurface,
+              color: Colors.white,
               letterSpacing: -0.3,
             ),
           ),

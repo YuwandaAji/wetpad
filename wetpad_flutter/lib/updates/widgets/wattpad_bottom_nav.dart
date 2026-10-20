@@ -24,7 +24,7 @@ class WattpadBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColors.background,
         border: Border(top: BorderSide(color: AppColors.border)),
       ),
       child: SafeArea(
@@ -40,10 +40,13 @@ class WattpadBottomNav extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(_icons[i],
-                          size: 26,
-                          color:
-                              selected ? AppColors.orange : AppColors.textSecondary),
+                      Icon(
+                        _icons[i],
+                        size: 26,
+                        color: selected
+                            ? AppColors.orange
+                            : AppColors.textSecondary,
+                      ),
                       const SizedBox(height: 4),
                       Container(
                         width: 30,
