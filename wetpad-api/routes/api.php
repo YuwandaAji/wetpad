@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\{AuthController, StoryController, PartController, ReportController, LibraryController, CommentController, ReactionController};
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\NotificationController; 
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReadingListController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\WriterController;
@@ -34,6 +34,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reading-lists', [ReadingListController::class, 'index']);
     Route::put('/reading-lists/{key}', [ReadingListController::class, 'upsert']);
     Route::delete('/reading-lists/{key}', [ReadingListController::class, 'destroy']);
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::put('/notifications/read-all', [NotificationController::class, 'readAll']);
+    Route::put('/notifications/{id}/read', [NotificationController::class, 'read']);
+    Route::get('/my/stories', [WriterController::class, 'mine']);
+    Route::post('/stories', [WriterController::class, 'store']);
+    Route::post('/stories/{id}/parts', [WriterController::class, 'addPart']);
 });
 
 Route::get('/stories/{id}/recommendations', [StoryController::class, 'recommendations']);
