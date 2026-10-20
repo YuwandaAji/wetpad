@@ -9,6 +9,7 @@ import '../widgets/novel_list_section.dart';
 import '../widgets/recommended_section.dart';
 import '../widgets/top_picks_collage.dart';
 
+/// Halaman Utama (Home) Wetpad. Data dari backend: GET /api/home
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -47,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
       final msg = e.toString().replaceFirst('Exception: ', '');
       if (_data != null) {
+        // muat ulang gagal: data lama tetap ditampilkan
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Gagal memuat ulang: $msg')));
       } else {
@@ -66,6 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
     _load();
   }
 
+  /// Buka halaman cerita. Daftar yang diketuk dikirim lengkap, supaya
+  /// bisa digeser ke novel lain sesuai urutan daftar itu.
   void _open(Novel n, List<Novel> list) {
     final ids = list.map((x) => x.id).toList();
     final i = ids.indexOf(n.id);
@@ -76,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
       SizedBox(height: 420, child: Center(child: child));
 
   Widget _errorView() {
+    // Warna "muted" ikut tema aktif (terang/gelap)
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return _centered(
@@ -131,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         const SizedBox(height: 12),
 
+        // 1. Cerita pilihan untuk kamu
         TopPicksCollage(
           novels: d.topPicks,
           onNovelTap: (n) => _open(n, d.topPicks),
@@ -144,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onNovelTap: (n) => _open(n, d.recommended),
         ),
 
+        // 3. Daftar peringkat genre teratas
         if (sections.isNotEmpty)
           NovelListSection(
             title: 'Daftar Novel ${sections.first.title}',
@@ -168,8 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
+      // backgroundColor otomatis mengikuti scaffoldBackgroundColor tema aktif
       appBar: const HomeHeader(),
       body: RefreshIndicator(
         color: AppColors.orange,
