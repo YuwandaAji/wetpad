@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../readmode/open_story.dart';
+import '../../core/theme.dart'; // sesuaikan kalau path temanya beda
 import '../models/novel.dart';
 import '../services/home_api.dart';
 import '../widgets/home_header.dart';
@@ -17,8 +18,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const _orange = Color(0xFFFF5B00);
-
   final ScrollController _scrollController = ScrollController();
   HomeData? _data;
   String? _error;
@@ -77,38 +76,52 @@ class _HomeScreenState extends State<HomeScreen> {
     openStoryFromList(context, ids, i < 0 ? 0 : i);
   }
 
-  Widget _centered(Widget child) => SizedBox(height: 420, child: Center(child: child));
+  Widget _centered(Widget child) =>
+      SizedBox(height: 420, child: Center(child: child));
 
   Widget _errorView() => _centered(
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            const Icon(Icons.cloud_off, size: 56, color: Color(0xFF9E9E9E)),
-            const SizedBox(height: 12),
-            const Text('Tidak bisa memuat Beranda',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-            const SizedBox(height: 6),
-            Text(_error ?? '',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 13, color: Color(0xFF757575))),
-            const SizedBox(height: 16),
-            FilledButton(
-              style: FilledButton.styleFrom(backgroundColor: _orange),
-              onPressed: _retry,
-              child: const Text('Coba lagi'),
-            ),
-          ]),
-        ),
-      );
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.cloud_off, size: 56, color: AppColors.muted),
+          const SizedBox(height: 12),
+          const Text(
+            'Tidak bisa memuat Beranda',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _error ?? '',
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 13, color: AppColors.muted),
+          ),
+          const SizedBox(height: 16),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.orange),
+            onPressed: _retry,
+            child: const Text('Coba lagi'),
+          ),
+        ],
+      ),
+    ),
+  );
 
   Widget _content(HomeData d) {
     if (d.topPicks.isEmpty && d.recommended.isEmpty && d.sections.isEmpty) {
-      return _centered(const Text('Belum ada cerita.',
-          style: TextStyle(fontSize: 16, color: Color(0xFF757575))));
+      return _centered(
+        const Text(
+          'Belum ada cerita.',
+          style: TextStyle(fontSize: 16, color: AppColors.muted),
+        ),
+      );
     }
 
     final sections = d.sections;
-    final ranked = sections.isEmpty ? <Novel>[] : sections.first.stories.take(5).toList();
+    final ranked = sections.isEmpty
+        ? <Novel>[]
+        : sections.first.stories.take(5).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,20 +168,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      // Tema terang khusus halaman Home
-      data: ThemeData.light(useMaterial3: true).copyWith(
-        scaffoldBackgroundColor: Colors.white,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: _orange,
-          primary: _orange,
-          surface: Colors.white,
-        ),
-      ),
+      data: appTheme(),
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.bg,
         appBar: const HomeHeader(),
         body: RefreshIndicator(
-          color: _orange,
+          color: AppColors.orange,
           onRefresh: _load,
           child: SingleChildScrollView(
             controller: _scrollController,
@@ -176,7 +181,9 @@ class _HomeScreenState extends State<HomeScreen> {
               parent: BouncingScrollPhysics(),
             ),
             child: _loading
-                ? _centered(const CircularProgressIndicator(color: _orange))
+                ? _centered(
+                    const CircularProgressIndicator(color: AppColors.orange),
+                  )
                 : (_data == null ? _errorView() : _content(_data!)),
           ),
         ),

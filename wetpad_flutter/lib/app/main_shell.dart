@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../home/screens/home_screen.dart';
@@ -10,6 +9,7 @@ import '../readmode/open_story.dart';
 import '../search/data/api_search_repository.dart';
 import '../search/data/search_models.dart';
 import '../search/screens/search_screen.dart';
+import '../write/pages/write_page.dart';
 
 final _searchRepo = ApiSearchRepository();
 final _libraryRepo = ApiLibraryRepository();
@@ -46,7 +46,7 @@ class _MainShellState extends State<MainShell> {
       const HomeScreen(),
       SearchScreen(repository: _searchRepo, onStoryTap: _openSearchStory),
       LibraryScreen(key: ValueKey(_libraryKey), repository: _libraryRepo),
-      const _ComingSoon('Tulis'), // TODO: ganti dengan WritePage()
+      const WritePage(),
       const _ComingSoon('Pembaruan'),
     ];
 
@@ -71,10 +71,12 @@ class _ComingSoon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ColoredBox(
-        color: const Color(0xFF121212),
-        child: Center(
-          child: Text('Halaman $name segera hadir',
-              style: const TextStyle(fontSize: 18, color: Color(0xFFA0A0A0))),
-        ),
-      );
+    color: const Color(0xFF121212),
+    child: Center(
+      child: Text(
+        'Halaman $name segera hadir',
+        style: const TextStyle(fontSize: 18, color: Color(0xFFA0A0A0)),
+      ),
+    ),
+  );
 }
