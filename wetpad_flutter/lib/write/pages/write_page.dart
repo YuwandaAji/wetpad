@@ -3,6 +3,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme.dart';
 import 'add_story_info_page.dart';
+import 'series_page.dart';
+import 'editor_page.dart';
 
 const _writingResourcesUrl = 'https://creators.wattpad.com/writing-resources/';
 
@@ -52,7 +54,10 @@ class WritePage extends StatelessWidget {
         _menuItem(
           icon: const Icon(Icons.view_week_outlined, size: 28),
           label: 'Series',
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const SeriesPage()));
+          },
         ),
         _menuItem(
           icon: const Icon(Icons.note_add_outlined, size: 28),

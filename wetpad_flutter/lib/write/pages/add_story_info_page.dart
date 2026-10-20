@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/theme.dart';
+import 'editor_page.dart';
 
 class AddStoryInfoPage extends StatefulWidget {
   const AddStoryInfoPage({super.key});
@@ -46,9 +47,8 @@ class _AddStoryInfoPageState extends State<AddStoryInfoPage> {
     }
     // TODO: kirim judul, deskripsi, dan cover ke API
     // (menunggu endpoint dari backend)
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Cerita tersimpan (sementara)')),
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const EditorPage()));
   }
 
   @override
