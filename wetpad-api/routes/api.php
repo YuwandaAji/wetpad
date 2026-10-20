@@ -4,6 +4,7 @@ use App\Http\Controllers\{AuthController, StoryController, PartController, Repor
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReadingListController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\WriterController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
@@ -32,6 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reading-lists', [ReadingListController::class, 'index']);
     Route::put('/reading-lists/{key}', [ReadingListController::class, 'upsert']);
     Route::delete('/reading-lists/{key}', [ReadingListController::class, 'destroy']);
+    Route::get('/my/stories', [WriterController::class, 'mine']);
+    Route::post('/stories', [WriterController::class, 'store']);
+    Route::post('/stories/{id}/parts', [WriterController::class, 'addPart']);
 });
 
 Route::get('/stories/{id}/recommendations', [StoryController::class, 'recommendations']);
