@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\{AuthController, StoryController, PartController, ReportController, LibraryController, CommentController, ReactionController};
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\NotificationController; 
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ReadingListController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\WriterController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/register', [AuthController::class, 'register']);
@@ -29,6 +30,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/parts/{id}/paragraphs/{idx}/reactions', [ReactionController::class, 'store']);
     Route::get('/library', [LibraryController::class, 'index']);
     Route::put('/library/{storyId}', [LibraryController::class, 'upsert']);
+    Route::post('/library', [LibraryController::class, 'store']);
+    Route::put('/library/{storyId}/progress', [LibraryController::class, 'progress']);  
     Route::delete('/library/{storyId}', [LibraryController::class, 'destroy']);
     Route::get('/reading-lists', [ReadingListController::class, 'index']);
     Route::put('/reading-lists/{key}', [ReadingListController::class, 'upsert']);
@@ -36,12 +39,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::put('/notifications/read-all', [NotificationController::class, 'readAll']);
     Route::put('/notifications/{id}/read', [NotificationController::class, 'read']);
+    Route::get('/my/stories', [WriterController::class, 'mine']);
+    Route::post('/stories', [WriterController::class, 'store']);
+    Route::post('/stories/{id}/parts', [WriterController::class, 'addPart']);
 });
 
 Route::get('/stories/{id}/recommendations', [StoryController::class, 'recommendations']);
 
-Route::post('/library', [LibraryController::class, 'store']);
-Route::put('/library/{storyId}/progress', [LibraryController::class, 'progress']);
+
 
 Route::get('/parts/{id}/paragraphs/{idx}/reactions', [ReactionController::class, 'index']);
 
