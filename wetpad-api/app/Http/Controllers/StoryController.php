@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Story;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class StoryController extends Controller
@@ -50,5 +51,31 @@ class StoryController extends Controller
             'status' => $x->status,
             'parts_count' => $x->parts_count,
         ]));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:200',
+            'description' => 'required|string',
+            'cover' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $coverPath = null;
+        if ($request->hasFile('cover')) {
+            $path = $request->file('cover')->store('covers', 'public');
+            $coverPath = '/storage/' . $path;
+        }
+
+        $story = Story::create([
+            // Menggunakan ID user 1 jika tidak ada token login (testing mode)
+            'author_id' => $request->user()?->id ?? 1, 
+            'title' => $request->title,
+            'description' => $request->description,
+            'cover_url' => $coverPath,
+            'status' => 'ongoing',
+        ]);
+
+        return response()->json($story, 201);
     }
 }

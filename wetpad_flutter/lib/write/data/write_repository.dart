@@ -5,10 +5,10 @@ import 'package:http/http.dart' as http;
 import 'story_models.dart';
 
 /// Ganti ke false kalau backend sudah siap
-const _useMock = true;
+const _useMock = false;
 
-// TODO: isi base URL backend
-const _apiBaseUrl = 'https://api.wetpad.com/v1';
+// Base URL backend (Ganti 10.0.2.2 dengan IP Laptop jika memakai HP fisik)
+const _apiBaseUrl = 'http://127.0.0.1:8000/api';
 
 final WriteRepository writeRepository = _useMock
     ? MockWriteRepository()
