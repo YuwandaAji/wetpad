@@ -12,6 +12,8 @@ class EditorPage extends StatefulWidget {
     this.partNumber = 1,
     this.totalParts = 1,
     this.onPublished,
+    this.coverBytes,
+    this.tags = const [],
   });
 
   final int partNumber;
@@ -20,6 +22,10 @@ class EditorPage extends StatefulWidget {
   /// Diisi saat editor dibuka dari Edit Story (ADD NEW PART).
   /// Dipanggil setelah publish dengan judul part yang baru.
   final void Function(String title)? onPublished;
+
+  /// Cover dan tag cerita yang sedang ditulis (dikirim dari Edit Story).
+  final Uint8List? coverBytes;
+  final List<String> tags;
 
   @override
   State<EditorPage> createState() => _EditorPageState();
@@ -134,10 +140,11 @@ class _EditorPageState extends State<EditorPage> {
       return;
     }
 
-    // Alur pertama kali: setelah publish, tampilkan Edit Story.
+    // Alur pertama kali: lengkapi data cerita di Edit Story dulu.
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: (_) => EditStoryPage(
+          coverBytes: widget.coverBytes,
           partTitles: [title.isEmpty ? 'Untitled Part 1' : title],
         ),
       ),

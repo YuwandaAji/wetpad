@@ -4,19 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/theme.dart';
+import '../widgets/continue_writing_card.dart';
 import 'editor_page.dart';
+import 'published_page.dart';
 
 const _requiredColor = Color(0xFFFF5A36);
 
 class EditStoryPage extends StatefulWidget {
   const EditStoryPage({
     super.key,
+    this.initial,
     this.storyTitle = 'Default Title - Write Your Own',
     this.description = '',
     this.coverBytes,
     this.partTitles = const [],
   });
 
+  /// Dibuka dari kartu "Continue writing": semua data cerita dibawa ke sini.
+  final WriteSummary? initial;
+
+  /// Dipakai saat cerita baru (alur pertama kali dari Editor).
   final String storyTitle;
   final String description;
   final Uint8List? coverBytes;
@@ -29,17 +36,49 @@ class EditStoryPage extends StatefulWidget {
 class _EditStoryPageState extends State<EditStoryPage> {
   final _picker = ImagePicker();
 
-  late String _title = widget.storyTitle;
-  late String _description = widget.description;
-  late Uint8List? _cover = widget.coverBytes;
-  late final List<String> _parts = [...widget.partTitles];
+  late String _title = widget.initial?.title ?? widget.storyTitle;
+  late String _description = widget.initial?.description ?? widget.description;
+  late Uint8List? _cover = widget.initial?.coverBytes ?? widget.coverBytes;
+  late final List<String> _parts = [
+    ...(widget.initial?.partTitles ?? widget.partTitles),
+  ];
+  late String _language = widget.initial?.language ?? 'English';
+  late String _storyType = widget.initial?.storyType ?? '';
+  late String _tags = widget.initial?.tags ?? '';
+  late String _copyright = widget.initial?.copyright ?? 'All Rights Reserved';
+  late bool _mature = widget.initial?.mature ?? false;
+  late bool _completed = widget.initial?.completed ?? false;
 
-  String _language = 'English';
-  String _storyType = '';
-  String _tags = '';
-  String _copyright = 'All Rights Reserved';
-  bool _mature = false;
-  bool _completed = false;
+  @override
+  void initState() {
+    super.initState();
+    // Simpan ke ringkasan supaya kartu "Continue writing" ikut terisi.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _sync());
+  }
+
+  void _sync() {
+    writeSummary.value = WriteSummary(
+      title: _title,
+      description: _description,
+      partTitles: List.of(_parts),
+      coverBytes: _cover,
+      language: _language,
+      storyType: _storyType,
+      tags: _tags,
+      copyright: _copyright,
+      mature: _mature,
+      completed: _completed,
+    );
+  }
+
+  /// setState + simpan ke ringkasan.
+  void _update(VoidCallback change) {
+    setState(change);
+    _sync();
+  }
+
+  List<String> get _tagList =>
+      _tags.split(',').map((t) => t.trim()).where((t) => t.isNotEmpty).toList();
 
   void _toast(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
@@ -54,7 +93,7 @@ class _EditStoryPageState extends State<EditStoryPage> {
     if (file == null) return;
     final bytes = await file.readAsBytes();
     if (!mounted) return;
-    setState(() => _cover = bytes);
+    _update(() => _cover = bytes);
   }
 
   Future<String?> _editText(
@@ -132,7 +171,7 @@ class _EditStoryPageState extends State<EditStoryPage> {
 
   Future<void> _editTitle() async {
     final v = await _editText('Story Title', _title);
-    if (v != null && v.isNotEmpty) setState(() => _title = v);
+    if (v != null && v.isNotEmpty) _update(() => _title = v);
   }
 
   Future<void> _editDescription() async {
@@ -141,7 +180,7 @@ class _EditStoryPageState extends State<EditStoryPage> {
       _description,
       multiline: true,
     );
-    if (v != null) setState(() => _description = v);
+    if (v != null) _update(() => _description = v);
   }
 
   Future<void> _editLanguage() async {
@@ -149,7 +188,7 @@ class _EditStoryPageState extends State<EditStoryPage> {
       'English',
       'Bahasa Indonesia',
     ], _language);
-    if (v != null) setState(() => _language = v);
+    if (v != null) _update(() => _language = v);
   }
 
   Future<void> _editStoryType() async {
@@ -157,12 +196,12 @@ class _EditStoryPageState extends State<EditStoryPage> {
       'Original',
       'Fanfiction',
     ], _storyType);
-    if (v != null) setState(() => _storyType = v);
+    if (v != null) _update(() => _storyType = v);
   }
 
   Future<void> _editTags() async {
     final v = await _editText('Tags (pisahkan dengan koma)', _tags);
-    if (v != null) setState(() => _tags = v);
+    if (v != null) _update(() => _tags = v);
   }
 
   Future<void> _editCopyright() async {
@@ -171,7 +210,7 @@ class _EditStoryPageState extends State<EditStoryPage> {
       'Public Domain',
       'Creative Commons',
     ], _copyright);
-    if (v != null) setState(() => _copyright = v);
+    if (v != null) _update(() => _copyright = v);
   }
 
   void _addPart() {
@@ -180,8 +219,10 @@ class _EditStoryPageState extends State<EditStoryPage> {
         builder: (_) => EditorPage(
           partNumber: _parts.length + 1,
           totalParts: _parts.length + 1,
+          coverBytes: _cover,
+          tags: _tagList,
           onPublished: (title) {
-            setState(() {
+            _update(() {
               _parts.add(
                 title.isEmpty ? 'Untitled Part ${_parts.length + 1}' : title,
               );
@@ -196,13 +237,17 @@ class _EditStoryPageState extends State<EditStoryPage> {
     // TODO: muat isi part dari API. Sementara hanya membuka editor kosong.
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) =>
-            EditorPage(partNumber: index + 1, totalParts: _parts.length),
+        builder: (_) => EditorPage(
+          partNumber: index + 1,
+          totalParts: _parts.length,
+          coverBytes: _cover,
+          tags: _tagList,
+        ),
       ),
     );
   }
 
-  void _saveAndPublish() {
+  Future<void> _saveAndPublish() async {
     final missing = <String>[
       if (_title.trim().isEmpty) 'Story Title',
       if (_description.trim().isEmpty) 'Story Description',
@@ -213,8 +258,25 @@ class _EditStoryPageState extends State<EditStoryPage> {
       _toast('Lengkapi dulu: ${missing.join(', ')}');
       return;
     }
+    if (_parts.isEmpty) {
+      _toast('Tambahkan minimal satu part');
+      return;
+    }
     // TODO: kirim ke API (menunggu endpoint dari backend)
-    _toast('Cerita dipublikasikan (sementara)');
+    _sync();
+
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => PublishedPage(
+          partNumber: _parts.length,
+          partTitle: _parts.last,
+          coverBytes: _cover,
+          tags: _tagList,
+        ),
+      ),
+    );
+    if (!mounted) return;
+    Navigator.pop(context); // DONE: kembali ke halaman Write
   }
 
   @override
@@ -310,12 +372,12 @@ class _EditStoryPageState extends State<EditStoryPage> {
                 'Wetpad community has the ability to rate your story Mature. '
                 'For more info, check the Content Guidelines under Settings.',
             value: _mature,
-            onChanged: (v) => setState(() => _mature = v),
+            onChanged: (v) => _update(() => _mature = v),
           ),
           _SwitchRow(
             title: 'Completed Story',
             value: _completed,
-            onChanged: (v) => setState(() => _completed = v),
+            onChanged: (v) => _update(() => _completed = v),
           ),
           _tocHeader(),
           for (var i = 0; i < _parts.length; i++) _partTile(i),
