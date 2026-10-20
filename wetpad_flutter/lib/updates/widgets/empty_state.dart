@@ -35,7 +35,9 @@ class EmptyState extends StatelessWidget {
                 fontSize: boldTitle ? 20 : 17,
                 height: 1.3,
                 fontWeight: boldTitle ? FontWeight.w800 : FontWeight.w400,
-                color: boldTitle ? AppColors.textPrimary : Colors.grey.shade700,
+                color: boldTitle
+                    ? AppColors.textPrimary
+                    : AppColors.textSecondary,
               ),
             ),
             if (subtitle != null) ...[
@@ -46,7 +48,7 @@ class EmptyState extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 15,
                   height: 1.4,
-                  color: boldTitle ? AppColors.textPrimary : Colors.grey.shade600,
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -117,25 +119,25 @@ class _Illustration extends StatelessWidget {
 class FeedEmptyIllustration extends StatelessWidget {
   const FeedEmptyIllustration({super.key});
 
-  static const _c = Color(0xFFE6E6E6);
+  static const _c = Color(0xFF3A3A3A);
 
   Widget _bar(double w, double h) => Container(
-        width: w,
-        height: h,
-        decoration: BoxDecoration(
-          color: _c,
-          borderRadius: BorderRadius.circular(h / 2),
-        ),
-      );
+    width: w,
+    height: h,
+    decoration: BoxDecoration(
+      color: _c,
+      borderRadius: BorderRadius.circular(h / 2),
+    ),
+  );
 
   Widget _block(double w, double h) => Container(
-        width: w,
-        height: h,
-        decoration: BoxDecoration(
-          color: _c,
-          borderRadius: BorderRadius.circular(4),
-        ),
-      );
+    width: w,
+    height: h,
+    decoration: BoxDecoration(
+      color: _c,
+      borderRadius: BorderRadius.circular(4),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +145,7 @@ class FeedEmptyIllustration extends StatelessWidget {
       width: 206,
       padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F5F5),
+        color: AppColors.tabBackground,
         borderRadius: BorderRadius.circular(6),
       ),
       child: Column(
@@ -154,12 +156,15 @@ class FeedEmptyIllustration extends StatelessWidget {
             children: [
               const CircleAvatar(
                 radius: 8,
-                backgroundColor: Color(0xFFD0D0D0),
-                child: Text('w',
-                    style: TextStyle(
-                        fontSize: 9,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w800)),
+                backgroundColor: Color(0xFF555555),
+                child: Text(
+                  'w',
+                  style: TextStyle(
+                    fontSize: 9,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ),
               const SizedBox(width: 6),
               Expanded(child: _bar(double.infinity, 5)),

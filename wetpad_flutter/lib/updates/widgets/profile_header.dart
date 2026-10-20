@@ -192,8 +192,8 @@ class _RestoreProfileActionButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         minimumSize: const Size(190, 44),
         foregroundColor: AppColors.textPrimary,
-        backgroundColor: Colors.white,
-        side: const BorderSide(color: Colors.white, width: 1.5),
+        backgroundColor: AppColors.followButton,
+        side: const BorderSide(color: AppColors.border, width: 1.5),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
       ),
@@ -228,7 +228,7 @@ class _CoinPill extends StatelessWidget {
       height: 32,
       padding: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: const Color(0xFFF2F2F2),
+        color: AppColors.followButton,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -246,7 +246,7 @@ class _CoinPill extends StatelessWidget {
           const SizedBox(width: 22),
           const Text('0', style: TextStyle(fontSize: 16)),
           const SizedBox(width: 18),
-          Container(width: 1, height: 32, color: const Color(0xFFD8D8D8)),
+          Container(width: 1, height: 32, color: AppColors.border),
           const SizedBox(width: 12),
           const Icon(Icons.add, size: 18),
           const SizedBox(width: 12),

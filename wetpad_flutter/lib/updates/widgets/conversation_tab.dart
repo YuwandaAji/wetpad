@@ -60,7 +60,7 @@ class ConversationTab extends StatelessWidget {
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: const Color(0xFFEAEAEA)),
+                        border: Border.all(color: AppColors.border),
                       ),
                       child: Row(
                         children: [
