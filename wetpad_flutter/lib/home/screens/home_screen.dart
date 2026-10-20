@@ -8,6 +8,7 @@ import '../widgets/home_header.dart';
 import '../widgets/novel_list_section.dart';
 import '../widgets/recommended_section.dart';
 import '../widgets/top_picks_collage.dart';
+import '../../updates/pages/edit_profile_page.dart';
 
 /// Halaman Utama (Home) Wetpad. Data dari backend: GET /api/home
 class HomeScreen extends StatefulWidget {
@@ -182,7 +183,11 @@ class _HomeScreenState extends State<HomeScreen> {
     // jadi pastikan theme, darkTheme, dan themeMode sudah di-set di main.dart.
     return Scaffold(
       // backgroundColor otomatis mengikuti scaffoldBackgroundColor tema aktif
-      appBar: const HomeHeader(),
+      appBar: HomeHeader(
+        onProfileTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const EditProfilePage()),
+        ),
+      ),
       body: RefreshIndicator(
         color: AppColors.orange,
         onRefresh: _load,

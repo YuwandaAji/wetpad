@@ -7,6 +7,7 @@ import 'add_story_info_page.dart';
 import 'edit_story_page.dart';
 import 'series_page.dart';
 import 'stories_page.dart';
+import '../../updates/data/profile_store.dart';
 
 const _writingResourcesUrl = 'https://creators.wattpad.com/writing-resources/';
 
@@ -37,24 +38,35 @@ class WritePage extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-            child: Row(
-              children: [
-                const Text(
-                  'Write',
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                ),
-                const Spacer(),
-                const Text(
-                  '@rozakl', // TODO: ambil dari Session
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(width: 12),
-                const CircleAvatar(
-                  radius: 22,
-                  backgroundColor: Colors.grey,
-                  child: Icon(Icons.person, color: Colors.white),
-                ),
-              ],
+            child: AnimatedBuilder(
+              animation: ProfileStore.instance,
+              builder: (context, _) {
+                final s = ProfileStore.instance;
+                final img = s.avatarImage;
+                final initial = s.name.trim().isEmpty ? '?' : s.name.trim()[0].toUpperCase();
+                return Row(
+                  children: [
+                    const Text(
+                      'Write',
+                      style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '@${s.username}',
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 12),
+                    CircleAvatar(
+                      radius: 22,
+                      backgroundColor: const Color(0xFF14171C),
+                      backgroundImage: img,
+                      child: img == null
+                          ? Text(initial, style: const TextStyle(color: Colors.white))
+                          : null,
+                    ),
+                  ],
+                );
+              },
             ),
           ),
           ValueListenableBuilder<WriteSummary?>(

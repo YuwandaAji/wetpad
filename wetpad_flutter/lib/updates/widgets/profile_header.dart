@@ -245,35 +245,6 @@ class _CoinPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< Updated upstream
-    return Container(
-      height: 32,
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(
-        color: AppColors.followButton,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFC107),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.bolt, size: 15, color: Colors.white),
-          ),
-          const SizedBox(width: 22),
-          const Text('0', style: TextStyle(fontSize: 16)),
-          const SizedBox(width: 18),
-          Container(width: 1, height: 32, color: AppColors.border),
-          const SizedBox(width: 12),
-          const Icon(Icons.add, size: 18),
-          const SizedBox(width: 12),
-        ],
-=======
     return AnimatedBuilder(
       animation: ProfileStore.instance,
       builder: (context, _) => Container(
@@ -327,7 +298,6 @@ class _CoinPill extends StatelessWidget {
             ),
           ],
         ),
->>>>>>> Stashed changes
       ),
     );
   }

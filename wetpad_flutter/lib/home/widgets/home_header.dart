@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme.dart'; // sesuaikan kalau path temanya beda
+import '../../core/theme.dart';
+import '../../updates/data/profile_store.dart'; // sesuaikan kalau path temanya beda
+
 
 class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onPremiumTap;
@@ -111,27 +113,35 @@ class HomeHeader extends StatelessWidget implements PreferredSizeWidget {
 
             const SizedBox(width: 10),
 
-            // Avatar Profil User ("M")
-            InkWell(
-              onTap: onProfileTap,
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                width: 34,
-                height: 34,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF38A3C8),
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  "M",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 15,
+            // Avatar profil user, ikut ProfileStore
+            AnimatedBuilder(
+              animation: ProfileStore.instance,
+              builder: (context, _) {
+                final s = ProfileStore.instance;
+                final img = s.avatarImage;
+                final initial = s.name.trim().isEmpty
+                    ? '?'
+                    : s.name.trim()[0].toUpperCase();
+                return InkWell(
+                  onTap: onProfileTap,
+                  borderRadius: BorderRadius.circular(20),
+                  child: CircleAvatar(
+                    radius: 17,
+                    backgroundColor: const Color(0xFF38A3C8),
+                    backgroundImage: img,
+                    child: img == null
+                        ? Text(
+                            initial,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15,
+                            ),
+                          )
+                        : null,
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),
