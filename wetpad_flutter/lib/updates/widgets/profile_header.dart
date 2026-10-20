@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../services/profile_api.dart';
+
 import '../data/follow_store.dart';
 import '../data/library_store.dart';
 import '../data/profile_action_store.dart';
@@ -10,16 +12,19 @@ import '../utils/formatters.dart';
 import 'follow_button.dart';
 import 'profile_avatar.dart';
 import 'profile_action_dialog.dart';
+import '../data/profile_store.dart';
 
 /// Isi header gelap (di bawah baris toolbar).
 class ProfileHeaderContent extends StatelessWidget {
   final Profile profile;
   final bool actionsDisabled;
+  final VoidCallback? onAvatarTap;
 
   const ProfileHeaderContent({
     super.key,
     required this.profile,
     this.actionsDisabled = false,
+    this.onAvatarTap,
   });
 
   @override
@@ -37,7 +42,7 @@ class ProfileHeaderContent extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        ProfileAvatar(profile: p, size: 92, ring: true),
+        ProfileAvatar(profile: p, size: 92, ring: true, onTap: onAvatarTap),
         const SizedBox(height: 10),
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -123,7 +128,23 @@ class ProfileHeaderContent extends StatelessWidget {
                 animation: store,
                 builder: (context, _) => FollowButton(
                   isFollowing: store.isFollowing(p.id),
-                  onTap: () => store.toggle(p.id),
+                  onTap: () async {
+                    if (p.type == ProfileType.community) {
+                      store.toggle(p.id); // communities are still mock
+                      return;
+                    }
+                    final was = store.isFollowing(p.id);
+                    store.setFollowing(p.id, !was); // optimistic
+                    try {
+                      await ProfileApi.setFollow(p, !was);
+                    } catch (e) {
+                      store.setFollowing(p.id, was); // rollback
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(SnackBar(content: Text('$e')));
+                      }
+                    }
+                  },
                 ),
               );
             },
@@ -224,6 +245,7 @@ class _CoinPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
     return Container(
       height: 32,
       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -251,6 +273,61 @@ class _CoinPill extends StatelessWidget {
           const Icon(Icons.add, size: 18),
           const SizedBox(width: 12),
         ],
+=======
+    return AnimatedBuilder(
+      animation: ProfileStore.instance,
+      builder: (context, _) => Container(
+        height: 32,
+        padding: const EdgeInsets.only(left: 4),
+        decoration: BoxDecoration(
+          color: AppColors.followButton,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFC107),
+                shape: BoxShape.circle,
+              ),
+              child: const Text(
+                'W',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+            const SizedBox(width: 22),
+            Text('${ProfileStore.instance.coins}',
+                style: const TextStyle(fontSize: 16)),
+            const SizedBox(width: 18),
+            Container(width: 1, height: 32, color: AppColors.border),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: const BorderRadius.horizontal(
+                  right: Radius.circular(16),
+                ),
+                onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Pembelian koin segera hadir')),
+                ),
+                child: const SizedBox(
+                  height: 32,
+                  width: 42,
+                  child: Icon(Icons.add, size: 18),
+                ),
+              ),
+            ),
+          ],
+        ),
+>>>>>>> Stashed changes
       ),
     );
   }

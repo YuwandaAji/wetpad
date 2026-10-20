@@ -9,18 +9,38 @@ import '../theme/app_theme.dart';
 import 'post_tile.dart';
 import 'profile_avatar.dart';
 
-class ConversationTab extends StatelessWidget {
+class ConversationTab extends StatefulWidget {
   final Profile profile;
   final String? initialPostId;
-
   const ConversationTab({super.key, required this.profile, this.initialPostId});
+
+  @override
+  State<ConversationTab> createState() => _ConversationTabState();
+}
+
+class _ConversationTabState extends State<ConversationTab> {
+  Profile get profile => widget.profile;
+  String? get initialPostId => widget.initialPostId;
+
+  @override
+  void initState() {
+    super.initState();
+    ConversationStore.instance.load(profile);
+  }
 
   Future<void> _openComposePage(BuildContext context) async {
     final text = await Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (_) => CreatePostPage(profile: profile)),
     );
     if (text != null && context.mounted) {
-      ConversationStore.instance.addPost(profile, text);
+      try {
+        await ConversationStore.instance.addPost(profile, text);
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('$e')));
+        }
+      }
     }
   }
 
@@ -101,8 +121,26 @@ class ConversationTab extends StatelessWidget {
                       post: p,
                       authorId: p.authorId,
                       isMine: p.authorId == ProfilesData.me.id,
-                      onReply: (text) => store.addReply(p, text),
-                      onDelete: () => store.deletePost(profile, p),
+                      onReply: (text) async {
+                        try {
+                          await store.addReply(profile, p, text);
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(SnackBar(content: Text('$e')));
+                          }
+                        }
+                      },
+                      onDelete: () async {
+                        try {
+                          await store.deletePost(profile, p);
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(SnackBar(content: Text('$e')));
+                          }
+                        }
+                      },
                     ),
                     const SizedBox(height: 14),
                   ],

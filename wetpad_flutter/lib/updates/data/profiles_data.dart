@@ -6,6 +6,7 @@ import '../models/profile.dart';
 import '../models/story.dart';
 import 'communities_data.dart';
 import 'stories_data.dart';
+import 'profile_store.dart';
 
 class ProfilesData {
   static List<Story> _storiesBy(String name) => StoriesData.all
@@ -13,26 +14,31 @@ class ProfilesData {
       .toList();
 
   /// Profil akun kita sendiri.
-  static final Profile me = Profile(
-    id: 'me',
-    type: ProfileType.user,
-    name: 'Ali Mukahfi',
-    username: 'sencroma',
-    about: '',
-    followers: 0,
-    following: 0,
-    color: const Color(0xFF14171C),
-    bannerColor: const Color(0xFF1C1C1C),
-    isMe: true,
-    joinedLabel: 'Bergabung sejak 15 Okt',
-    stories: const [StoriesData.draft],
-    readingLists: const [
-      ProfileReadingList(
-        title: 'Daftar Bacaan sencroma',
-        stories: [StoriesData.midnightLetters],
-      ),
-    ],
-  );
+    /// Profil akun kita sendiri, selalu diambil dari ProfileStore.
+  static Profile get me {
+    final s = ProfileStore.instance;
+    return Profile(
+      id: 'me',
+      type: ProfileType.user,
+      name: s.name,
+      username: s.username,
+      about: s.about,
+      followers: 0,
+      following: 0,
+      color: const Color(0xFF14171C),
+      bannerColor: const Color(0xFF666666), // abu-abu seperti di screenshot
+      isMe: true,
+      image: s.avatarImage,
+      joinedLabel: 'Bergabung sejak 15 Okt',
+      stories: const [StoriesData.draft],
+      readingLists: [
+        ProfileReadingList(
+          title: 'Daftar Bacaan ${s.username}',
+          stories: const [StoriesData.midnightLetters],
+        ),
+      ],
+    );
+  }
 
   static List<Profile> _followingSample({required String except}) =>
       CommunitiesData.all

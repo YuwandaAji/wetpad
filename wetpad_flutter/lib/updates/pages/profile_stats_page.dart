@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../data/follow_store.dart';
 import '../data/library_store.dart';
@@ -10,6 +9,7 @@ import '../theme/app_theme.dart';
 import '../widgets/profile_avatar.dart';
 import '../widgets/profile_story_card.dart';
 import '../utils/formatters.dart';
+import '../utils/share_helper.dart';   // <-- TAMBAH
 import '../widgets/story_cover.dart';
 import 'profile_page.dart';
 
@@ -184,13 +184,13 @@ class ProfileStatsPage extends StatelessWidget {
     );
   }
 
-  Future<void> _shareStory(BuildContext context, Story story) async {
-    final link =
-        'https://www.wattpad.com/story/${Uri.encodeComponent(story.id)}';
-    await Clipboard.setData(ClipboardData(text: link));
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Tautan cerita disalin.')));
+    Future<void> _shareStory(BuildContext context, Story story) {
+    return shareContent(
+      context,
+      text: '${story.title} oleh ${story.author}\n${storyShareLink(story.id)}',
+      subject: story.title,
+      copiedMessage: 'Tautan cerita disalin.',
+    );
   }
 
   Future<void> _showAddToLibrary(BuildContext context, Story story) async {
