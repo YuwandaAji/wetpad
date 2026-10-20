@@ -22,6 +22,9 @@ class RecommendedSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (novels.isEmpty) return const SizedBox.shrink();
 
+    // Warna teks ikut tema aktif (terang/gelap)
+    final cs = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -32,10 +35,10 @@ class RecommendedSection extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF1C1C1C),
+                  color: cs.onSurface,
                   letterSpacing: -0.3,
                 ),
               ),
@@ -44,7 +47,7 @@ class RecommendedSection extends StatelessWidget {
                 subtitle,
                 style: TextStyle(
                   fontSize: 13,
-                  color: Colors.grey.shade600,
+                  color: cs.onSurfaceVariant,
                 ),
               ),
             ],
@@ -72,6 +75,8 @@ class RecommendedSection extends StatelessWidget {
   }
 
   Widget _buildNovelCard(BuildContext context, Novel novel) {
+    final cs = Theme.of(context).colorScheme;
+
     return InkWell(
       onTap: () => onNovelTap(novel),
       borderRadius: BorderRadius.circular(6),
@@ -94,10 +99,10 @@ class RecommendedSection extends StatelessWidget {
               novel.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF1C1C1C),
+                color: cs.onSurface,
                 height: 1.15,
               ),
             ),
@@ -115,9 +120,9 @@ class RecommendedSection extends StatelessWidget {
                 const SizedBox(width: 3),
                 Text(
                   novel.reads,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
-                    color: Color(0xFF757575),
+                    color: cs.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -130,9 +135,9 @@ class RecommendedSection extends StatelessWidget {
                 const SizedBox(width: 2),
                 Text(
                   novel.votes,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
-                    color: Color(0xFF757575),
+                    color: cs.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

@@ -15,10 +15,13 @@ class HomeBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.bg,
-        border: Border(top: BorderSide(color: kDivider, width: 1.0)),
+      // Latar dan garis atas ikut tema aktif (terang/gelap)
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        border: Border(top: BorderSide(color: theme.dividerColor, width: 1.0)),
       ),
       child: SafeArea(
         top: false,
@@ -34,7 +37,7 @@ class HomeBottomNav extends StatelessWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildNavIcon(i, i == currentIndex),
+                        _buildNavIcon(context, i, i == currentIndex),
                         const SizedBox(height: 4),
                         // Garis indikator oranye di bawah ikon aktif
                         Container(
@@ -58,8 +61,10 @@ class HomeBottomNav extends StatelessWidget {
     );
   }
 
-  Widget _buildNavIcon(int index, bool isSelected) {
-    final color = isSelected ? AppColors.orange : AppColors.muted;
+  Widget _buildNavIcon(BuildContext context, int index, bool isSelected) {
+    final color = isSelected
+        ? AppColors.orange
+        : Theme.of(context).colorScheme.onSurfaceVariant;
 
     switch (index) {
       case 0:

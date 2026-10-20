@@ -79,41 +79,49 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _centered(Widget child) =>
       SizedBox(height: 420, child: Center(child: child));
 
-  Widget _errorView() => _centered(
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.cloud_off, size: 56, color: AppColors.muted),
-          const SizedBox(height: 12),
-          const Text(
-            'Tidak bisa memuat Beranda',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            _error ?? '',
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 13, color: AppColors.muted),
-          ),
-          const SizedBox(height: 16),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.orange),
-            onPressed: _retry,
-            child: const Text('Coba lagi'),
-          ),
-        ],
+  Widget _errorView() {
+    // Warna "muted" ikut tema aktif (terang/gelap)
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+
+    return _centered(
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.cloud_off, size: 56, color: muted),
+            const SizedBox(height: 12),
+            const Text(
+              'Tidak bisa memuat Beranda',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              _error ?? '',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 13, color: muted),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: AppColors.orange),
+              onPressed: _retry,
+              child: const Text('Coba lagi'),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   Widget _content(HomeData d) {
     if (d.topPicks.isEmpty && d.recommended.isEmpty && d.sections.isEmpty) {
       return _centered(
-        const Text(
+        Text(
           'Belum ada cerita.',
-          style: TextStyle(fontSize: 16, color: AppColors.muted),
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       );
     }
@@ -167,19 +175,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: appTheme(),
-      child: Scaffold(
-        backgroundColor: AppColors.bg,
-        appBar: const HomeHeader(),
-        body: RefreshIndicator(
-          color: AppColors.orange,
-          onRefresh: _load,
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics(),
-            ),
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+
+    // Tidak lagi membungkus dengan Theme(data: appTheme()).
+    // Tema (terang/gelap) sekarang diambil dari MaterialApp di atasnya,
+    // jadi pastikan theme, darkTheme, dan themeMode sudah di-set di main.dart.
+    return Scaffold(
+      // backgroundColor otomatis mengikuti scaffoldBackgroundColor tema aktif
+      appBar: const HomeHeader(),
+      body: RefreshIndicator(
+        color: AppColors.orange,
+        onRefresh: _load,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          // Teks yang tidak menentukan warna sendiri memakai onSurface
+          // (putih di mode gelap, gelap di mode terang).
+          child: DefaultTextStyle.merge(
+            style: TextStyle(color: onSurface),
             child: _loading
                 ? _centered(
                     const CircularProgressIndicator(color: AppColors.orange),

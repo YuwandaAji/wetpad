@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/theme.dart';
+import 'editor_page.dart';
 import '../data/story_models.dart';
 import '../data/write_repository.dart';
 
