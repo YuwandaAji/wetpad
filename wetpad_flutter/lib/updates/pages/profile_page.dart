@@ -1,18 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../data/profile_action_store.dart';
 import '../models/profile.dart';
 import '../theme/app_theme.dart';
+import '../utils/share_helper.dart';
 import '../widgets/about_tab.dart';
 import '../widgets/conversation_tab.dart';
 import '../widgets/profile_action_dialog.dart';
+import '../widgets/profile_avatar.dart';
 import '../widgets/profile_header.dart';
+import '../services/profile_api.dart';
+import '../data/profile_store.dart';
+import '../data/profiles_data.dart';
+import 'edit_profile_page.dart';
 
-/// Buka profil dari mana saja.
 void openProfile(BuildContext context, Profile profile) {
-  Navigator.of(context)
-      .push(MaterialPageRoute(builder: (_) => ProfilePage(profile: profile)));
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (_) => profile.isMe
+          ? const MyProfilePage()
+          : ProfilePage(profile: profile),
+    ),
+  );
+}
+
+/// Profil sendiri: otomatis ter-update saat ProfileStore berubah.
+class MyProfilePage extends StatelessWidget {
+  const MyProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: ProfileStore.instance,
+    builder: (context, _) => ProfilePage(profile: ProfilesData.me),
+  );
+}
+
+/// Buka profil user/penulis dari database lewat username.
+void openProfileByUsername(BuildContext context, String username) {
+  final future = ProfileApi.fetch(username); // dipanggil sekali saja
+  Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (_) => FutureBuilder<Profile>(
+        future: future,
+        builder: (context, snap) {
+          if (snap.hasData) return ProfilePage(profile: snap.data!);
+          return Scaffold(
+            appBar: AppBar(),
+            body: Center(
+              child: snap.hasError
+                  ? Text(
+                      'Gagal memuat profil.\n${snap.error}',
+                      textAlign: TextAlign.center,
+                    )
+                  : const CircularProgressIndicator(),
+            ),
+          );
+        },
+      ),
+    ),
+  );
 }
 
 class ProfilePage extends StatelessWidget {
@@ -30,49 +76,48 @@ class ProfilePage extends StatelessWidget {
   static const double _expanded = 330; // tinggi header (di luar status bar)
   static const double _toolbar = 56;
 
-  Future<void> _copyProfileLink(BuildContext context) async {
-    final link =
-        'https://www.wattpad.com/user/${Uri.encodeComponent(profile.username)}';
-    await Clipboard.setData(ClipboardData(text: link));
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Tautan profil disalin. Bagikan kepada temanmu!'),
+  Future<void> _inviteFriends(BuildContext context) =>
+      inviteFriends(context, profile.username);
+
+  Future<void> _showProfileAvatar(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (context) => Dialog(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ProfileAvatar(profile: profile, size: 200, ring: true),
+              const SizedBox(height: 16),
+              Text(
+                profile.name,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                '@${profile.username}',
+                style: const TextStyle(color: AppColors.textSecondary),
+              ),
+            ],
+          ),
         ),
-      );
-    }
+      ),
+    );
   }
 
   Future<void> _handleProfileAction(BuildContext context, String action) async {
     final actions = ProfileActionStore.instance;
     switch (action) {
       case 'share':
-        final link = _profileLink;
-        final copied = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Bagikan profil'),
-            content: SelectableText(link),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: const Text('Tutup'),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: const Text('Salin tautan'),
-              ),
-            ],
-          ),
+        await shareContent(
+          context,
+          text: '${profile.name} di Wetpad\n$_profileLink',
+          subject: profile.name,
+          copiedMessage: 'Tautan profil disalin.',
         );
-        if (copied == true && context.mounted) {
-          await Clipboard.setData(ClipboardData(text: link));
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Tautan profil disalin.')),
-            );
-          }
-        }
       case 'mute':
         actions.muteProfile(profile.id);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -173,8 +218,7 @@ class ProfilePage extends StatelessWidget {
     }
   }
 
-  String get _profileLink =>
-      'https://www.wattpad.com/user/${Uri.encodeComponent(profile.username)}';
+  String get _profileLink => profileShareLink(profile.username);
 
   @override
   Widget build(BuildContext context) {
@@ -231,11 +275,16 @@ class ProfilePage extends StatelessWidget {
                             top: top + 48,
                             left: 16,
                             right: 16,
-                            child: Opacity(
-                              opacity: t,
-                              child: ProfileHeaderContent(
-                                profile: profile,
-                                actionsDisabled: isRestricted,
+                            child: IgnorePointer(
+                              ignoring: t <= 0.01,
+                              child: Opacity(
+                                opacity: t,
+                                child: ProfileHeaderContent(
+                                  profile: profile,
+                                  actionsDisabled: isRestricted,
+                                  onAvatarTap: () =>
+                                      _showProfileAvatar(context),
+                                ),
                               ),
                             ),
                           ),
@@ -271,15 +320,15 @@ class ProfilePage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                if (profile.isMe)
+                                                                if (profile.isMe)
                                   IconButton(
-                                    tooltip:
-                                        'Undang teman dengan tautan profil',
-                                    icon: Icon(
-                                      Icons.person_add_alt_1,
-                                      color: iconColor,
+                                    tooltip: 'Pengaturan',
+                                    icon: Icon(Icons.settings, color: iconColor),
+                                    onPressed: () => Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => const EditProfilePage(),
+                                      ),
                                     ),
-                                    onPressed: () => _copyProfileLink(context),
                                   )
                                 else
                                   PopupMenuButton<String>(

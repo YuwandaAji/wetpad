@@ -10,8 +10,17 @@ import '../search/data/api_search_repository.dart';
 import '../search/data/search_models.dart';
 import '../search/screens/search_screen.dart';
 import '../write/pages/write_page.dart';
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+=======
 import '../updates/pages/updates_page.dart';
 import '../updates/theme/app_theme.dart';
+import '../updates/services/profile_api.dart';
+>>>>>>> Stashed changes
+=======
+import '../updates/pages/updates_page.dart';
+import '../updates/theme/app_theme.dart';
+>>>>>>> main
 
 final _searchRepo = ApiSearchRepository();
 final _libraryRepo = ApiLibraryRepository();
@@ -28,6 +37,14 @@ class _MainShellState extends State<MainShell> {
   late int _i = widget.initialIndex;
   int _libraryKey = 0; // naik tiap Library dibuka -> data dimuat ulang
   int _updatesKey = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    ProfileApi.loadMe().then((_) {
+      if (mounted) setState(() => _updatesKey++);
+    }).catchError((_) {}); // offline: keep going
+  }
 
   void _openSearchStory(SearchStory s) {
     final id = int.tryParse(s.id);

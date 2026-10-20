@@ -6,12 +6,14 @@ class ProfileAvatar extends StatelessWidget {
   final Profile profile;
   final double size;
   final bool ring; // lingkaran tepi gelap seperti di header
+  final VoidCallback? onTap;
 
   const ProfileAvatar({
     super.key,
     required this.profile,
     this.size = 40,
     this.ring = false,
+    this.onTap,
   });
 
   @override
@@ -24,7 +26,11 @@ class ProfileAvatar extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(width: size * 0.36, height: 1.5, color: profile.textColor),
+                Container(
+                  width: size * 0.36,
+                  height: 1.5,
+                  color: profile.textColor,
+                ),
                 const SizedBox(height: 4),
                 FittedBox(
                   fit: BoxFit.scaleDown,
@@ -38,7 +44,11 @@ class ProfileAvatar extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Container(width: size * 0.36, height: 1.5, color: profile.textColor),
+                Container(
+                  width: size * 0.36,
+                  height: 1.5,
+                  color: profile.textColor,
+                ),
               ],
             ),
           )
@@ -51,6 +61,22 @@ class ProfileAvatar extends StatelessWidget {
             ),
           );
 
+    final avatar = Container(
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: profile.color,
+        shape: BoxShape.circle,
+        border: ring
+            ? Border.all(color: const Color(0xFF222222), width: 3)
+            : null,
+      ),
+      child: child,
+    );
+
+    if (onTap == null) return avatar;
+
     return Container(
       width: size,
       height: size,
@@ -58,9 +84,12 @@ class ProfileAvatar extends StatelessWidget {
       decoration: BoxDecoration(
         color: profile.color,
         shape: BoxShape.circle,
+        image: profile.image == null
+            ? null
+            : DecorationImage(image: profile.image!, fit: BoxFit.cover),
         border: ring ? Border.all(color: const Color(0xFF222222), width: 3) : null,
       ),
-      child: child,
+      child: profile.image == null ? child : null,
     );
   }
 }

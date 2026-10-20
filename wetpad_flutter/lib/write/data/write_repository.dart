@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import '../../core/config_api.dart';
 import 'story_models.dart';
 
 /// Ganti ke false kalau backend sudah siap
@@ -13,9 +14,8 @@ const _apiBaseUrl = 'http://127.0.0.1:8000/api';
 final WriteRepository writeRepository = _useMock
     ? MockWriteRepository()
     : ApiWriteRepository(
-        baseUrl: _apiBaseUrl,
-        // TODO: ganti dengan token dari Session, contoh: () => Session.token
-        tokenProvider: () => null,
+        baseUrl: () => ApiConfig.base,
+        tokenProvider: () => Session.token,
       );
 
 abstract class WriteRepository {
@@ -47,11 +47,11 @@ class MockWriteRepository implements WriteRepository {
   }
 }
 
-/// Implementasi REST API sungguhan
+/// Implementasi REST API sungguhan (backend Laravel Wetpad)
 class ApiWriteRepository implements WriteRepository {
   ApiWriteRepository({required this.baseUrl, required this.tokenProvider});
 
-  final String baseUrl;
+  final String Function() baseUrl;
   final String? Function() tokenProvider;
 
   Map<String, String> get _headers {
@@ -64,7 +64,7 @@ class ApiWriteRepository implements WriteRepository {
 
   @override
   Future<Story> createStory(StoryDraft draft) async {
-    final req = http.MultipartRequest('POST', Uri.parse('$baseUrl/stories'))
+    final req = http.MultipartRequest('POST', Uri.parse('${baseUrl()}/stories'))
       ..headers.addAll(_headers)
       ..fields['title'] = draft.title
       ..fields['description'] = draft.description;
@@ -82,25 +82,40 @@ class ApiWriteRepository implements WriteRepository {
     final res = await http.Response.fromStream(
       await req.send().timeout(const Duration(seconds: 30)),
     );
-    _check(res);
-    return Story.fromJson(jsonDecode(res.body) as Map<String, dynamic>);
+    final data = _data(res);
+    return Story.fromJson(Map<String, dynamic>.from(data as Map));
   }
 
   @override
   Future<List<Story>> getMyStories() async {
     final res = await http
-        .get(Uri.parse('$baseUrl/stories/mine'), headers: _headers)
+        .get(Uri.parse('${baseUrl()}/my/stories'), headers: _headers)
         .timeout(const Duration(seconds: 15));
+    final list = _data(res) as List<dynamic>;
+    return list
+        .map((e) => Story.fromJson(Map<String, dynamic>.from(e as Map)))
+        .toList();
+  }
+
+  /// Backend membungkus hasil: { success, data, message }
+  dynamic _data(http.Response res) {
     _check(res);
-    final list = jsonDecode(res.body) as List<dynamic>;
-    return list.map((e) => Story.fromJson(e as Map<String, dynamic>)).toList();
+    final body = jsonDecode(res.body);
+    return (body is Map && body.containsKey('data')) ? body['data'] : body;
   }
 
   void _check(http.Response res) {
     if (res.statusCode >= 200 && res.statusCode < 300) return;
     var msg = 'Terjadi kesalahan (${res.statusCode})';
     try {
-      msg = (jsonDecode(res.body)['message'] as String?) ?? msg;
+      final j = jsonDecode(res.body);
+      final errs = j['errors'];
+      if (errs is Map && errs.isNotEmpty) {
+        final f = errs.values.first;
+        msg = (f is List && f.isNotEmpty) ? '${f.first}' : '$f';
+      } else {
+        msg = (j['message'] as String?) ?? msg;
+      }
     } catch (_) {}
     throw ApiException(msg, res.statusCode);
   }

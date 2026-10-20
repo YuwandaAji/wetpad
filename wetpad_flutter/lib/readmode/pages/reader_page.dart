@@ -264,6 +264,7 @@ class _ReaderPageState extends State<ReaderPage> {
   Future<void> _addToLibrary() async {
     try {
       await ReadApi.addToLibrary(_part!.storyId);
+      await ReadApi.saveProgress(_part!.storyId, _part!.id); // BARU
       if (!mounted) return;
       setState(() => _inLibrary = true);
       _snack('Ditambahkan ke perpustakaan');
@@ -308,6 +309,7 @@ class _ReaderPageState extends State<ReaderPage> {
       if (add) {
         try {
           await ReadApi.addToLibrary(p.storyId);
+          await ReadApi.saveProgress(p.storyId, p.id); // BARU
           if (mounted) _snack('Ditambahkan ke perpustakaan');
         } catch (e) {
           if (mounted) _snack('$e');
