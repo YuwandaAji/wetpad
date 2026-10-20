@@ -4,12 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/theme.dart';
+import 'edit_story_page.dart';
 
 class EditorPage extends StatefulWidget {
-  const EditorPage({super.key, this.partNumber = 1, this.totalParts = 1});
+  const EditorPage({
+    super.key,
+    this.partNumber = 1,
+    this.totalParts = 1,
+    this.onPublished,
+  });
 
   final int partNumber;
   final int totalParts;
+
+  /// Diisi saat editor dibuka dari Edit Story (ADD NEW PART).
+  /// Dipanggil setelah publish dengan judul part yang baru.
+  final void Function(String title)? onPublished;
 
   @override
   State<EditorPage> createState() => _EditorPageState();
@@ -115,11 +125,23 @@ class _EditorPageState extends State<EditorPage> {
 
   void _publish() {
     // TODO: kirim judul, isi, dan media ke API (menunggu endpoint backend)
-    final messenger = ScaffoldMessenger.of(context);
-    messenger.showSnackBar(
-      const SnackBar(content: Text('Cerita dipublikasikan (sementara)')),
+    final title = _titleCtrl.text.trim();
+
+    // Dibuka dari Edit Story (ADD NEW PART): kabari halaman itu lalu kembali.
+    if (widget.onPublished != null) {
+      widget.onPublished!(title);
+      Navigator.pop(context);
+      return;
+    }
+
+    // Alur pertama kali: setelah publish, tampilkan Edit Story.
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => EditStoryPage(
+          partTitles: [title.isEmpty ? 'Untitled Part 1' : title],
+        ),
+      ),
     );
-    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   @override

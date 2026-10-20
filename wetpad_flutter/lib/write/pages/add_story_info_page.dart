@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../core/theme.dart';
-import 'editor_page.dart';
 import '../data/story_models.dart';
 import '../data/write_repository.dart';
+import 'editor_page.dart';
 
 class AddStoryInfoPage extends StatefulWidget {
   const AddStoryInfoPage({super.key});
@@ -63,7 +63,12 @@ class _AddStoryInfoPageState extends State<AddStoryInfoPage> {
         ),
       );
       if (!mounted) return;
-      Navigator.pop(context, story);
+      // Ganti halaman ini dengan Editor. Tombol back dari Editor kembali
+      // ke halaman sebelumnya, dan `story` tetap dikirim sebagai hasil.
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const EditorPage()),
+        result: story,
+      );
     } on ApiException catch (e) {
       if (mounted) _toast(e.message);
     } catch (_) {
