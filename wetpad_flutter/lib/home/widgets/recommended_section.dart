@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme.dart';
 import '../models/novel.dart';
 import 'novel_cover_image.dart';
 
@@ -22,9 +23,6 @@ class RecommendedSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (novels.isEmpty) return const SizedBox.shrink();
 
-    // Warna teks ikut tema aktif (terang/gelap)
-    final cs = Theme.of(context).colorScheme;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -38,7 +36,7 @@ class RecommendedSection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.w800,
-                  color: cs.onSurface,
+                  color: Colors.white,
                   letterSpacing: -0.3,
                 ),
               ),
@@ -47,7 +45,7 @@ class RecommendedSection extends StatelessWidget {
                 subtitle,
                 style: TextStyle(
                   fontSize: 13,
-                  color: cs.onSurfaceVariant,
+                  color: AppColors.muted,
                 ),
               ),
             ],
@@ -75,8 +73,6 @@ class RecommendedSection extends StatelessWidget {
   }
 
   Widget _buildNovelCard(BuildContext context, Novel novel) {
-    final cs = Theme.of(context).colorScheme;
-
     return InkWell(
       onTap: () => onNovelTap(novel),
       borderRadius: BorderRadius.circular(6),
@@ -102,7 +98,7 @@ class RecommendedSection extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: cs.onSurface,
+                color: Colors.white,
                 height: 1.15,
               ),
             ),
@@ -122,7 +118,7 @@ class RecommendedSection extends StatelessWidget {
                   novel.reads,
                   style: TextStyle(
                     fontSize: 11,
-                    color: cs.onSurfaceVariant,
+                    color: AppColors.muted,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -137,7 +133,7 @@ class RecommendedSection extends StatelessWidget {
                   novel.votes,
                   style: TextStyle(
                     fontSize: 11,
-                    color: cs.onSurfaceVariant,
+                    color: AppColors.muted,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

@@ -10,12 +10,17 @@ import '../search/data/api_search_repository.dart';
 import '../search/data/search_models.dart';
 import '../search/screens/search_screen.dart';
 import '../write/pages/write_page.dart';
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
 import '../updates/pages/updates_page.dart';
 import '../updates/theme/app_theme.dart';
 import '../updates/services/profile_api.dart';
 >>>>>>> Stashed changes
+=======
+import '../updates/pages/updates_page.dart';
+import '../updates/theme/app_theme.dart';
+>>>>>>> main
 
 final _searchRepo = ApiSearchRepository();
 final _libraryRepo = ApiLibraryRepository();
@@ -31,6 +36,7 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   late int _i = widget.initialIndex;
   int _libraryKey = 0; // naik tiap Library dibuka -> data dimuat ulang
+  int _updatesKey = 0;
 
   @override
   void initState() {
@@ -50,6 +56,7 @@ class _MainShellState extends State<MainShell> {
     if (i == _i) return;
     setState(() {
       if (i == 2) _libraryKey++;
+      if (i == 4) _updatesKey++;
       _i = i;
     });
   }
@@ -61,7 +68,10 @@ class _MainShellState extends State<MainShell> {
       SearchScreen(repository: _searchRepo, onStoryTap: _openSearchStory),
       LibraryScreen(key: ValueKey(_libraryKey), repository: _libraryRepo),
       const WritePage(),
-      const _ComingSoon('Pembaruan'),
+       Theme(                                            
+        data: AppTheme.dark,
+        child: UpdatesPage(key: ValueKey(_updatesKey)),
+      ),
     ];
 
     return PopScope(

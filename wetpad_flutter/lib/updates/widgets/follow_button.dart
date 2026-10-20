@@ -14,12 +14,15 @@ class FollowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fg = isFollowing ? AppColors.textPrimary : Colors.white;
+    final fg = Colors.white;
     return Material(
-      color: isFollowing ? Colors.white : const Color(0x33FFFFFF),
+      color: isFollowing ? AppColors.followButton : const Color(0x33000000),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(4),
-        side: const BorderSide(color: Colors.white, width: 1.5),
+        side: BorderSide(
+          color: isFollowing ? AppColors.border : Colors.white,
+          width: 1.5,
+        ),
       ),
       child: InkWell(
         onTap: onTap,

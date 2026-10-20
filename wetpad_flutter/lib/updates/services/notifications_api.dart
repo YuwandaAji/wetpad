@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import 'dart:async';
+=======
+>>>>>>> main
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -16,6 +19,7 @@ class NotificationsApi {
     if (r.statusCode == 401) {
       throw Exception('Sesi habis, silakan masuk lagi.');
     }
+<<<<<<< HEAD
     dynamic body;
     try {
       body = jsonDecode(r.body);
@@ -25,6 +29,9 @@ class NotificationsApi {
         'Cek log Laravel di storage/logs/laravel.log.',
       );
     }
+=======
+    final body = jsonDecode(r.body);
+>>>>>>> main
     if (r.statusCode >= 400 || body['success'] != true) {
       throw Exception(body['message'] ?? 'HTTP ${r.statusCode}');
     }
@@ -33,6 +40,7 @@ class NotificationsApi {
 
   /// GET /api/notifications -> daftar notifikasi milik user yang login
   static Future<List<NotificationItem>> fetch() async {
+<<<<<<< HEAD
     if (Session.token == null) {
       throw Exception('Masuk dulu untuk melihat notifikasi.');
     }
@@ -56,6 +64,16 @@ class NotificationsApi {
         'Emulator Android memakai 10.0.2.2, bukan 127.0.0.1.',
       );
     }
+=======
+    final r = await http
+        .get(Uri.parse('${ApiConfig.base}/notifications'), headers: _h)
+        .timeout(const Duration(seconds: 8));
+    final d = _unwrap(r);
+    return [
+      for (final j in (d['items'] as List))
+        NotificationItem.fromJson(Map<String, dynamic>.from(j)),
+    ];
+>>>>>>> main
   }
 
   /// PUT /api/notifications/{id}/read -> tandai sudah dibaca
