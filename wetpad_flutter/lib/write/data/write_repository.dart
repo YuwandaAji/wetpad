@@ -5,8 +5,11 @@ import 'package:http/http.dart' as http;
 import '../../core/config_api.dart';
 import 'story_models.dart';
 
-/// true = data palsu (tanpa backend). false = backend Laravel Wetpad.
+/// Ganti ke false kalau backend sudah siap
 const _useMock = false;
+
+// Base URL backend (Ganti 10.0.2.2 dengan IP Laptop jika memakai HP fisik)
+const _apiBaseUrl = 'http://127.0.0.1:8000/api';
 
 final WriteRepository writeRepository = _useMock
     ? MockWriteRepository()

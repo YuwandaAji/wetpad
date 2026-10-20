@@ -64,6 +64,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/stories/{id}/parts', [WriterController::class, 'addPart']);
 });
 
+// Route POST /stories diletakkan di sini agar bisa diuji tanpa token login Sanctum
+Route::post('/stories', [StoryController::class, 'store']);
+
 Route::get('/stories/{id}/recommendations', [StoryController::class, 'recommendations']);
 
 
