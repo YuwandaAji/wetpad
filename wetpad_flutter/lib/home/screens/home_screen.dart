@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../readmode/pages/story_detail_page.dart';
-import '../data/sci_fi_novel_data.dart';
+import '../../readmode/open_story.dart';
+import '../../core/theme.dart'; // sesuaikan kalau path temanya beda
 import '../models/novel.dart';
+import '../services/home_api.dart';
 import '../widgets/home_header.dart';
-import '../widgets/home_bottom_nav.dart';
 import '../widgets/novel_list_section.dart';
 import '../widgets/recommended_section.dart';
 import '../widgets/top_picks_collage.dart';
 
-/// Halaman Utama (Home Screen) Wetpad
-/// Berisi Top Picks (kolase), Rekomendasi Novel Sains & Distopia, dan List Novel
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -20,61 +18,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
-  int _currentNavIndex = 0;
+  HomeData? _data;
+  String? _error;
+  bool _loading = true;
 
-  void _onNovelTap(Novel novel) {
-    // Navigasi ke halaman detail novel (readmode)
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => StoryDetailPage(storyId: novel.id)),
-    );
-  }
-
-  void _onBottomNavTap(int index) {
-    if (index == _currentNavIndex) {
-      if (index == 0 && _scrollController.hasClients) {
-        _scrollController.animateTo(
-          0,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-      return;
-    }
-
-    setState(() {
-      _currentNavIndex = index;
-    });
-
-    if (index == 1) {
-      Navigator.of(context).pushNamed('/search').then((_) {
-        if (mounted) setState(() => _currentNavIndex = 0);
-      });
-    } else if (index == 2) {
-      Navigator.of(context).pushNamed('/library').then((_) {
-        if (mounted) setState(() => _currentNavIndex = 0);
-      });
-    } else if (index == 3) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Tulis Cerita Baru: Buka imajinasi sci-fi Anda!"),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      setState(() => _currentNavIndex = 0);
-    } else if (index == 4) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Belum ada notifikasi baru"),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      setState(() => _currentNavIndex = 0);
-    }
-  }
-
-  Future<void> _handleRefresh() async {
-    await Future.delayed(const Duration(milliseconds: 800));
-    if (mounted) setState(() {});
+  @override
+  void initState() {
+    super.initState();
+    _load();
   }
 
   @override
@@ -83,60 +34,156 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Theme(
-      // Menggunakan tema bersih (light) khusus halaman Home persis seperti di foto
-      data: ThemeData.light(useMaterial3: true).copyWith(
-        scaffoldBackgroundColor: Colors.white,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFFF5B00),
-          primary: const Color(0xFFFF5B00),
-          surface: Colors.white,
+  Future<void> _load() async {
+    try {
+      final d = await HomeApi.fetch();
+      if (!mounted) return;
+      setState(() {
+        _data = d;
+        _error = null;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      final msg = e.toString().replaceFirst('Exception: ', '');
+      if (_data != null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Gagal memuat ulang: $msg')));
+      } else {
+        setState(() {
+          _error = msg;
+          _loading = false;
+        });
+      }
+    }
+  }
+
+  void _retry() {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    _load();
+  }
+
+  void _open(Novel n, List<Novel> list) {
+    final ids = list.map((x) => x.id).toList();
+    final i = ids.indexOf(n.id);
+    openStoryFromList(context, ids, i < 0 ? 0 : i);
+  }
+
+  Widget _centered(Widget child) =>
+      SizedBox(height: 420, child: Center(child: child));
+
+  Widget _errorView() {
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+
+    return _centered(
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.cloud_off, size: 56, color: muted),
+            const SizedBox(height: 12),
+            const Text(
+              'Tidak bisa memuat Beranda',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              _error ?? '',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 13, color: muted),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: AppColors.orange),
+              onPressed: _retry,
+              child: const Text('Coba lagi'),
+            ),
+          ],
         ),
       ),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: const HomeHeader(),
-        body: RefreshIndicator(
-          color: const Color(0xFFFF5B00),
-          onRefresh: _handleRefresh,
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics(),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 12),
+    );
+  }
 
-                // 1. Top Picks Collage ("Cerita pilihan untuk kamu")
-                TopPicksCollage(
-                  novels: SciFiNovelData.topPicks,
-                  onNovelTap: _onNovelTap,
-                ),
-
-                // 2. Recommended Novels ("Rekomendasi Cerita Sains & Distopia")
-                RecommendedSection(
-                  novels: SciFiNovelData.recommendedNovels,
-                  onNovelTap: _onNovelTap,
-                ),
-
-                // 3. List Novel ("Daftar Novel Sains & Distopia")
-                NovelListSection(
-                  novels: SciFiNovelData.novelList,
-                  onNovelTap: _onNovelTap,
-                ),
-
-                const SizedBox(height: 36),
-              ],
-            ),
+  Widget _content(HomeData d) {
+    if (d.topPicks.isEmpty && d.recommended.isEmpty && d.sections.isEmpty) {
+      return _centered(
+        Text(
+          'Belum ada cerita.',
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
-        bottomNavigationBar: HomeBottomNav(
-          currentIndex: _currentNavIndex,
-          onTap: _onBottomNavTap,
+      );
+    }
+
+    final sections = d.sections;
+    final ranked = sections.isEmpty
+        ? <Novel>[]
+        : sections.first.stories.take(5).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+
+        TopPicksCollage(
+          novels: d.topPicks,
+          onNovelTap: (n) => _open(n, d.topPicks),
+        ),
+
+        // 2. Rekomendasi (sesuai genre pilihan pengguna)
+        RecommendedSection(
+          title: 'Rekomendasi untuk kamu',
+          subtitle: 'Berdasarkan genre bacaan favoritmu',
+          novels: d.recommended,
+          onNovelTap: (n) => _open(n, d.recommended),
+        ),
+
+        if (sections.isNotEmpty)
+          NovelListSection(
+            title: 'Daftar Novel ${sections.first.title}',
+            subtitle: 'Peringkat cerita paling diminati minggu ini',
+            novels: ranked,
+            onNovelTap: (n) => _open(n, ranked),
+          ),
+
+        // 4. Genre lainnya
+        for (final s in sections.skip(1))
+          RecommendedSection(
+            title: 'Populer di ${s.title}',
+            subtitle: 'Cerita ${s.title} yang paling banyak dibaca',
+            novels: s.stories,
+            onNovelTap: (n) => _open(n, s.stories),
+          ),
+
+        const SizedBox(height: 36),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: const HomeHeader(),
+      body: RefreshIndicator(
+        color: AppColors.orange,
+        onRefresh: _load,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          child: _loading
+              ? _centered(
+                  const CircularProgressIndicator(color: AppColors.orange),
+                )
+              : (_data == null ? _errorView() : _content(_data!)),
         ),
       ),
     );

@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../../core/config_api.dart';
-import '../data/sci_fi_story_content.dart';
 import '../models/story.dart';
 import '../models/part.dart';
 import '../models/comment.dart';
@@ -33,86 +32,31 @@ class ReadApi {
   }
 
   static Future<Story> getStory(int id) async {
-    if (SciFiStoryContent.stories.containsKey(id)) {
-      return Story.fromJson(SciFiStoryContent.stories[id]!);
-    }
-    try {
-      final r = await http
-          .get(Uri.parse('${ApiConfig.base}/stories/$id'), headers: _headers)
-          .timeout(const Duration(seconds: 2));
-      return Story.fromJson(_unwrap(r));
-    } catch (_) {
-      return Story.fromJson(SciFiStoryContent.stories.values.first);
-    }
+    final r = await http.get(Uri.parse('${ApiConfig.base}/stories/$id'), headers: _headers);
+    return Story.fromJson(_unwrap(r));
   }
 
   static Future<List<PartItem>> getParts(int storyId) async {
-    if (SciFiStoryContent.partsList.containsKey(storyId)) {
-      return SciFiStoryContent.partsList[storyId]!
-          .map((e) => PartItem.fromJson(e))
-          .toList();
-    }
-    try {
-      final r = await http
-          .get(Uri.parse('${ApiConfig.base}/stories/$storyId/parts'),
-              headers: _headers)
-          .timeout(const Duration(seconds: 2));
-      return (_unwrap(r) as List).map((e) => PartItem.fromJson(e)).toList();
-    } catch (_) {
-      return SciFiStoryContent.partsList[1]!
-          .map((e) => PartItem.fromJson(e))
-          .toList();
-    }
+    final r = await http.get(Uri.parse('${ApiConfig.base}/stories/$storyId/parts'), headers: _headers);
+    return (_unwrap(r) as List).map((e) => PartItem.fromJson(e)).toList();
   }
 
   static Future<Part> getPart(int id) async {
-    if (SciFiStoryContent.partContents.containsKey(id)) {
-      return Part.fromJson(SciFiStoryContent.partContents[id]!);
-    }
-    try {
-      final r = await http
-          .get(Uri.parse('${ApiConfig.base}/parts/$id'), headers: _headers)
-          .timeout(const Duration(seconds: 2));
-      return Part.fromJson(_unwrap(r));
-    } catch (_) {
-      return Part.fromJson(SciFiStoryContent.partContents.values.first);
-    }
+    final r = await http.get(Uri.parse('${ApiConfig.base}/parts/$id'), headers: _headers);
+    return Part.fromJson(_unwrap(r));
   }
 
   /// return {voted: bool, votes: int}
   static Future<Map<String, dynamic>> toggleVote(int partId) async {
-    try {
-      final r = await http
-          .post(Uri.parse('${ApiConfig.base}/parts/$partId/vote'),
-              headers: _headers)
-          .timeout(const Duration(seconds: 2));
-      return Map<String, dynamic>.from(_unwrap(r));
-    } catch (_) {
-      return {'voted': true, 'votes': 65001};
-    }
+    final r = await http.post(Uri.parse('${ApiConfig.base}/parts/$partId/vote'), headers: _headers);
+    return Map<String, dynamic>.from(_unwrap(r));
   }
 
   static Future<List<StoryMini>> getRecommendations(int storyId) async {
-    try {
-      final r = await http
-          .get(Uri.parse('${ApiConfig.base}/stories/$storyId/recommendations'),
-              headers: _headers)
-          .timeout(const Duration(seconds: 2));
-      return (_unwrap(r) as List).map((e) => StoryMini.fromJson(e)).toList();
-    } catch (_) {
-      final otherStories = SciFiStoryContent.stories.values
-          .where((s) => s['id'] != storyId)
-          .map((s) => StoryMini.fromJson({
-                'id': s['id'],
-                'title': s['title'],
-                'cover_url': s['cover_url'],
-                'description': s['description'],
-                'status': s['status'],
-                'parts_count': s['parts_count'],
-              }))
-          .toList();
-      return otherStories;
-    }
+    final r = await http.get(
+        Uri.parse('${ApiConfig.base}/stories/$storyId/recommendations'),
+        headers: _headers);
+    return (_unwrap(r) as List).map((e) => StoryMini.fromJson(e)).toList();
   }
 
   static Future<void> reportStory(int storyId, String reason, String detail) async {

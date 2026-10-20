@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme.dart'; // sesuaikan kalau path temanya beda
+
 /// Bottom Navigation Bar persis seperti di tampilan Wattpad
 class HomeBottomNav extends StatelessWidget {
   final int currentIndex;
@@ -15,10 +17,8 @@ class HomeBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(color: Color(0xFFEEEEEE), width: 1.0),
-        ),
+        color: AppColors.bg,
+        border: Border(top: BorderSide(color: kDivider, width: 1.0)),
       ),
       child: SafeArea(
         top: false,
@@ -42,7 +42,7 @@ class HomeBottomNav extends StatelessWidget {
                           height: 3,
                           decoration: BoxDecoration(
                             color: i == currentIndex
-                                ? const Color(0xFFFF5B00)
+                                ? AppColors.orange
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(2),
                           ),
@@ -59,7 +59,7 @@ class HomeBottomNav extends StatelessWidget {
   }
 
   Widget _buildNavIcon(int index, bool isSelected) {
-    final color = isSelected ? const Color(0xFFFF5B00) : const Color(0xFF616161);
+    final color = isSelected ? AppColors.orange : AppColors.muted;
 
     switch (index) {
       case 0:
@@ -71,34 +71,20 @@ class HomeBottomNav extends StatelessWidget {
         );
       case 1:
         // Pencarian (Search)
-        return Icon(
-          Icons.search_rounded,
-          size: 28,
-          color: color,
-        );
+        return Icon(Icons.search_rounded, size: 28, color: color);
       case 2:
         // Perpustakaan / Rak Buku (\ ||)
         return SizedBox(
           width: 28,
           height: 28,
-          child: CustomPaint(
-            painter: _BookshelfPainter(color: color),
-          ),
+          child: CustomPaint(painter: _BookshelfPainter(color: color)),
         );
       case 3:
         // Tulis / Pensil
-        return Icon(
-          Icons.edit_outlined,
-          size: 26,
-          color: color,
-        );
+        return Icon(Icons.edit_outlined, size: 26, color: color);
       case 4:
         // Notifikasi / Lonceng
-        return Icon(
-          Icons.notifications_none_rounded,
-          size: 28,
-          color: color,
-        );
+        return Icon(Icons.notifications_none_rounded, size: 28, color: color);
       default:
         return Icon(Icons.circle, size: 24, color: color);
     }

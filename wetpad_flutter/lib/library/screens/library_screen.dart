@@ -11,6 +11,7 @@ import 'library_data.dart';
 import 'reading_list_detail_screen.dart';
 import 'reading_lists_tab.dart';
 import 'faq_screen.dart';
+import '../../readmode/open_story.dart';
 
 class LibraryScreen extends StatefulWidget {
   const LibraryScreen({super.key, this.repository});
@@ -323,7 +324,7 @@ class _LibraryScreenState extends State<LibraryScreen>
     switch (action) {
       case StoryAction.read:
         _markRead(story.id);
-        showAppSnack(ctx, 'Opening "${story.title}"...');
+        openStoryFromSearch(ctx, int.parse(story.id));
       case StoryAction.info:
         showStoryInfoSheet(ctx, story);
       case StoryAction.share:

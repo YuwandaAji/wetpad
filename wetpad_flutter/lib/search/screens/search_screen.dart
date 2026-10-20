@@ -350,7 +350,7 @@ class _SearchScreenState extends State<SearchScreen> {
           if (feed.originals.isNotEmpty)
             SliverToBoxAdapter(
               child: OriginalsCarousel(
-                title: 'Hottest Wattpad Originals',
+                title: 'Terpopuler di Wetpad',
                 stories: feed.originals,
                 onTap: _openStory,
               ),

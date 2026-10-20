@@ -25,29 +25,31 @@ class WritePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-          child: Row(
-            children: [
-              const Text(
-                'Write',
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-              ),
-              const Spacer(),
-              const Text(
-                '@rozakl',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 12),
-              const CircleAvatar(
-                radius: 22,
-                backgroundColor: Colors.grey,
-                child: Icon(Icons.person, color: Colors.white),
-              ),
-            ],
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+            child: Row(
+              children: [
+                const Text(
+                  'Write',
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                const Text(
+                  '@rozakl', // TODO: ambil dari Session
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 12),
+                const CircleAvatar(
+                  radius: 22,
+                  backgroundColor: Colors.grey,
+                  child: Icon(Icons.person, color: Colors.white),
+                ),
+              ],
+            ),
           ),
         ),
         const Divider(height: 1, color: kDivider),
