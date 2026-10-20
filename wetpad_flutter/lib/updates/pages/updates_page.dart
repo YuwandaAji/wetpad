@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
+import '../utils/share_helper.dart';
 
 import '../data/profiles_data.dart';
 import '../theme/app_theme.dart';
@@ -12,6 +13,7 @@ class UpdatesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -61,6 +63,26 @@ class UpdatesPage extends StatelessWidget {
                   Tab(height: 46, text: 'NOTIFIKASI'),
                   Tab(height: 46, text: 'PESAN'),
                 ],
+=======
+    return Theme(
+      data: AppTheme.dark,
+      child: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            titleSpacing: 16,
+            title: const Text(
+              'Updates',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+            ),
+            actions: [
+              IconButton(
+                key: const ValueKey('invite-friends'),
+                tooltip: 'Undang teman',
+                onPressed: () =>
+                    inviteFriends(context, ProfilesData.me.username),
+                icon: const Icon(Icons.person_add_alt_1, size: 26),
+>>>>>>> Stashed changes
               ),
             ),
             const Expanded(

@@ -8,6 +8,8 @@ import '../theme/app_theme.dart';
 import '../utils/formatters.dart';
 import 'profile_avatar.dart';
 import 'profile_story_card.dart';
+import '../services/profile_api.dart';
+import '../pages/edit_profile_page.dart';
 
 class AboutTab extends StatelessWidget {
   final Profile profile;
@@ -84,53 +86,81 @@ class _AboutText extends StatefulWidget {
 class _AboutTextState extends State<_AboutText> {
   bool _expanded = false;
   static const _limit = 110;
+  late String _about = widget.profile.about;
+
+  Future<void> _edit() async {
+    final ctrl = TextEditingController(text: _about);
+    final result = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Tentang saya'),
+        content: TextField(
+          controller: ctrl,
+          autofocus: true,
+          maxLength: 2000,
+          minLines: 4,
+          maxLines: 8,
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('BATAL')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, ctrl.text.trim()),
+            child: const Text('SIMPAN'),
+          ),
+        ],
+      ),
+    );
+    ctrl.dispose();
+    if (result == null) return;
+    try {
+      await ProfileApi.saveAbout(result);
+      if (mounted) setState(() => _about = result);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final p = widget.profile;
-    final empty = p.about.trim().isEmpty;
+    final empty = _about.trim().isEmpty;
     final text = empty
-        ? 'Ketuk di sini untuk menambahkan deskripsi tentang diri kamu…'
-        : p.about;
+        ? (p.isMe ? 'Ketuk di sini untuk menambahkan deskripsi tentang diri kamu…' : '')
+        : _about;
     final truncated = !_expanded && text.length > _limit;
-    final shown = truncated
-        ? '${text.substring(0, _limit).trimRight()}…'
-        : text;
+    final shown = truncated ? '${text.substring(0, _limit).trimRight()}…' : text;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 22, 16, 18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () => setState(() => _expanded = true),
-            child: Text.rich(
-              TextSpan(
-                style: const TextStyle(
-                  fontSize: 16,
-                  height: 1.45,
-                  color: AppColors.textPrimary,
+          if (text.isNotEmpty)
+            GestureDetector(
+              onTap: () => p.isMe && empty ? _edit() : setState(() => _expanded = true),
+              onLongPress: p.isMe ? _edit : null,
+              child: Text.rich(
+                TextSpan(
+                  style: const TextStyle(fontSize: 16, height: 1.45, color: AppColors.textPrimary),
+                  children: [
+                    TextSpan(text: shown),
+                    if (truncated)
+                      const TextSpan(
+                        text: ' lebih banyak',
+                        style: TextStyle(color: AppColors.textSecondary),
+                      ),
+                  ],
                 ),
-                children: [
-                  TextSpan(text: shown),
-                  if (truncated)
-                    const TextSpan(
-                      text: ' lebih banyak',
-                      style: TextStyle(color: AppColors.textSecondary),
-                    ),
-                ],
               ),
             ),
-          ),
+          if (p.isMe && !empty)
+            TextButton(onPressed: _edit, child: const Text('Edit deskripsi')),
           if (p.joinedLabel.isNotEmpty) ...[
             const SizedBox(height: 2),
-            Text(
-              p.joinedLabel,
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-              ),
-            ),
+            Text(p.joinedLabel,
+                style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
           ],
         ],
       ),
@@ -212,7 +242,7 @@ class _FollowingItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => openProfile(context, profile),
+      onTap: () => openProfileByUsername(context, profile.username),
       child: SizedBox(
         width: 112,
         child: Column(

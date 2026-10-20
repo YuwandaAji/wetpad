@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\{ProfileController, WriteController};
 use App\Http\Controllers\{AuthController, StoryController, PartController, ReportController, LibraryController, CommentController, ReactionController};
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ReadingListController;
@@ -12,6 +13,13 @@ Route::get('/auth/check', [AuthController::class, 'check']);
 
 Route::get('/home', [HomeController::class, 'index']);
 
+Route::get('/stories/mine', [WriteController::class, 'mine'])->middleware('auth:sanctum');
+
+// public profile (token optional so is_following works)
+Route::get('/users/{username}', [ProfileController::class, 'show']);
+Route::get('/users/{username}/followers', [ProfileController::class, 'followersList']);
+Route::get('/users/{username}/following', [ProfileController::class, 'followingList']);
+Route::get('/users/{username}/posts', [ProfileController::class, 'posts']);
 Route::get('/stories/{id}', [StoryController::class, 'show']);
 Route::get('/stories/{id}/parts', [StoryController::class, 'parts']);
 Route::get('/parts/{id}', [PartController::class, 'show']);
@@ -19,6 +27,18 @@ Route::get('/parts/{id}/comments', [CommentController::class, 'index']);
 Route::get('/comments/{id}/replies', [CommentController::class, 'replies']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/auth/profile', [ProfileController::class, 'update']);
+    Route::post('/users/{username}/follow', [ProfileController::class, 'follow']);
+    Route::delete('/users/{username}/follow', [ProfileController::class, 'unfollow']);
+    Route::post('/users/{username}/posts', [ProfileController::class, 'storePost']);
+    Route::delete('/posts/{id}', [ProfileController::class, 'destroyPost']);
+
+    Route::post('/stories', [WriteController::class, 'store']);
+    Route::match(['put', 'post'], '/stories/{id}', [WriteController::class, 'update']);
+    Route::delete('/stories/{id}', [WriteController::class, 'destroy']);
+    Route::post('/stories/{id}/parts', [WriteController::class, 'addPart']);
+    Route::put('/parts/{id}', [WriteController::class, 'updatePart']);
+    Route::delete('/parts/{id}', [WriteController::class, 'destroyPart']);
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::put('/auth/genres', [AuthController::class, 'setGenres']);
     Route::post('/parts/{id}/vote', [PartController::class, 'vote']);
