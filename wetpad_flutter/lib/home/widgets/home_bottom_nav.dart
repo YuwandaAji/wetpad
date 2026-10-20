@@ -21,7 +21,6 @@ class HomeBottomNav extends StatelessWidget {
       // Latar dan garis atas ikut tema aktif (terang/gelap)
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
-        border: Border(top: BorderSide(color: theme.dividerColor, width: 1.0)),
       ),
       child: SafeArea(
         top: false,
