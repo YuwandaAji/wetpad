@@ -26,14 +26,15 @@ class TopPicksCollage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Judul Bagian: "Cerita pilihan untuk kamu"
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
             "Cerita pilihan untuk kamu",
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF1C1C1C),
+              // Warna teks ikut tema aktif (terang/gelap)
+              color: Theme.of(context).colorScheme.onSurface,
               letterSpacing: -0.3,
             ),
           ),
